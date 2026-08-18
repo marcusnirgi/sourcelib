@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SourceLib.Core/SourceLib.Core.csproj" />
+  <Project Path="SourceLib.Tests/SourceLib.Tests.csproj" />
+</Solution>

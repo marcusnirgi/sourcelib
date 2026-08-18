@@ -1,0 +1,8 @@
+// we wanna add a comment here for testing
+#base "extras.vdf"
+
+"Key1"  "Value1"
+"List"
+{
+	"InnerKey1"  "InnerValue1"
+}
