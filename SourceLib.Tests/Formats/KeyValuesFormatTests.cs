@@ -78,7 +78,7 @@ public class KeyValues1FormatTests
     }
 
     [Fact]
-    public void Test_RoundTrips_ClientScheme_With_Tags()
+    public void Test_Roundtrips_ClientScheme_With_Tags()
     {
         var hl2 = _games.Get(GameId.HalfLife2);
         var path = hl2.GetPath("hl2", "resource", "clientscheme.res");
