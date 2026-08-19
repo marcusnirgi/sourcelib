@@ -98,4 +98,6 @@
 /home/marcus/Projects/sourcelib/SourceLib.Tests/obj/Debug/net10.0/SourceLib.Tests.genruntimeconfig.cache
 /home/marcus/Projects/sourcelib/SourceLib.Tests/obj/Debug/net10.0/ref/SourceLib.Tests.dll
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/sourcelib.local.json
-/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/vdf/main.vdf
+/home/marcus/Projects/sourcelib/SourceLib.Tests/obj/Debug/net10.0/SourceLib.Tests.sourcelink.json
+/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv/main.vdf
+/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv2/citizen_head.dmx

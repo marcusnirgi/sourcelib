@@ -9,3 +9,4 @@
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/refint/SourceLib.Core.dll
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.pdb
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/ref/SourceLib.Core.dll
+/home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.sourcelink.json

@@ -6,7 +6,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
 {
     public KeyValuesDocument Parse(ReadOnlySpan<char> input)
     {
-        var body = new List<KeyValuePair>();
+        var body = new List<KeyValuesPair>();
         var macros = new List<string>();
 
         var lexer = new Lexer(input.ToString());
@@ -30,7 +30,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
         return new KeyValuesDocument() { Body = body.ToImmutableList(), Macros = macros };
     }
 
-    private KeyValuePair ParsePairOrObject(Lexer lexer, string key)
+    private KeyValuesPair ParsePairOrObject(Lexer lexer, string key)
     {
         var tags = ParseTags(lexer);
         var next = lexer.PeekNextToken();
@@ -50,11 +50,11 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
         }
     }
 
-    private KeyValuePair ParseObject(Lexer lexer, string key, IReadOnlyList<string> tags)
+    private KeyValuesPair ParseObject(Lexer lexer, string key, IReadOnlyList<string> tags)
     {
-        lexer.NextToken(); // let's eat up the {
+        lexer.NextToken();
 
-        var pairList = new List<KeyValuePair>();
+        var pairList = new List<KeyValuesPair>();
         while (true)
         {
             var nextToken = lexer.NextToken();
@@ -73,16 +73,21 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
             }
         }
 
-        return new KeyValuePair(key, KeyValueValue.FromObject(pairList.ToImmutableList()), tags);
+        return new KeyValuesPair(
+            key,
+            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            tags,
+            pairList.ToImmutableList()
+        );
     }
 
-    private KeyValuePair ParsePair(Lexer lexer, string key, IReadOnlyList<string> tags)
+    private KeyValuesPair ParsePair(Lexer lexer, string key, IReadOnlyList<string> tags)
     {
         var token = lexer.NextToken();
         var trailingTags = ParseTags(lexer);
         var allTags = tags.Concat(trailingTags).ToImmutableList();
 
-        return new KeyValuePair(
+        return new KeyValuesPair(
             key,
             KeyValueValue.FromPrimitive(InferPrimitiveFromString(token.Value)),
             allTags
@@ -95,14 +100,14 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
 
         while (lexer.PeekNextToken().Tag == LexerTag.LBracket)
         {
-            lexer.NextToken(); // [
+            lexer.NextToken();
 
             while (lexer.PeekNextToken().Tag != LexerTag.RBracket)
             {
                 tags.Add(lexer.NextToken().Value);
             }
 
-            lexer.NextToken(); // ]
+            lexer.NextToken();
         }
 
         return tags.ToImmutableList();

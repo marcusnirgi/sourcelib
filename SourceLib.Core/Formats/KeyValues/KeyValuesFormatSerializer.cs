@@ -14,19 +14,19 @@ public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValues
             SerializePair(pair, writer, 0);
     }
 
-    private void SerializePair(KeyValuePair pair, TextWriter writer, int indent)
+    private void SerializePair(KeyValuesPair pair, TextWriter writer, int indent)
     {
         WriteIndent(writer, indent);
         WriteQuoted(writer, pair.Key);
         WriteTags(writer, pair.Tags);
 
-        if (pair.Value.IsObject)
+        if (pair.Children != null)
         {
             writer.WriteLine();
             WriteIndent(writer, indent);
             writer.WriteLine("{");
 
-            foreach (var child in pair.Value.Object!)
+            foreach (var child in pair.Children!)
                 SerializePair(child, writer, indent + 1);
 
             WriteIndent(writer, indent);

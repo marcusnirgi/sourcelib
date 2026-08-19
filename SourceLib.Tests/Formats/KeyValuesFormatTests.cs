@@ -16,10 +16,10 @@ public class KeyValues1FormatTests
     [Fact]
     public void Test_Parses_VDF_With_Macro_And_Comments()
     {
-        var mainVdfPath = TestFixtures.GetPath("vdf", "main.vdf");
-        var mainVdfContent = File.ReadAllText(mainVdfPath);
-        var kv1FormatParser = new KeyValuesFormatParser();
-        var document = kv1FormatParser.Parse(mainVdfContent);
+        var fixturePath = TestFixtures.GetPath("kv", "main.vdf");
+        var fixtureContent = File.ReadAllText(fixturePath);
+        var parser = new KeyValuesFormatParser();
+        var document = parser.Parse(fixtureContent);
 
         Assert.Equal(2, document.Body.Count);
         Assert.Single(document.Macros);
@@ -31,10 +31,10 @@ public class KeyValues1FormatTests
 
         var listValue = document.Body.FirstOrDefault(pair => pair.Key == "List");
         Assert.NotNull(listValue);
-        Assert.Single(listValue.Value.Object!);
+        Assert.Single(listValue.Children!);
         Assert.Equal(
             "InnerValue1",
-            listValue.Value.Object!.FirstOrDefault(pair => pair.Key == "InnerKey1")?.Value.String
+            listValue.Children!.FirstOrDefault(pair => pair.Key == "InnerKey1")?.Value.String
         );
     }
 
@@ -48,15 +48,15 @@ public class KeyValues1FormatTests
         var document = parser.Parse(File.ReadAllText(path));
         var scheme = document.Body.FirstOrDefault(p => p.Key == "Scheme");
         Assert.NotNull(scheme);
-        var fonts = scheme.Value.Object!.FirstOrDefault(p => p.Key == "Fonts");
+        var fonts = scheme.Children!.FirstOrDefault(p => p.Key == "Fonts");
         Assert.NotNull(fonts);
-        var defaultFont = fonts.Value.Object!.FirstOrDefault(p => p.Key == "Default");
+        var defaultFont = fonts.Children!.FirstOrDefault(p => p.Key == "Default");
         Assert.NotNull(defaultFont);
 
-        var xboxFont = defaultFont.Value.Object!.FirstOrDefault(p => p.Tags.Contains("$X360"));
+        var xboxFont = defaultFont.Children!.FirstOrDefault(p => p.Tags.Contains("$X360"));
         Assert.NotNull(xboxFont);
 
-        var name = xboxFont.Value.Object!.FirstOrDefault(p => p.Key == "name");
+        var name = xboxFont.Children!.FirstOrDefault(p => p.Key == "name");
         Assert.NotNull(name);
 
         Assert.Equal("Verdana", name.Value.String);
@@ -65,15 +65,15 @@ public class KeyValues1FormatTests
     [Fact]
     public void Test_Roundtrips_VDF_With_Macro()
     {
-        var mainVdfPath = TestFixtures.GetPath("vdf", "main.vdf");
-        var mainVdfContent = File.ReadAllText(mainVdfPath);
-        var kv1FormatParser = new KeyValuesFormatParser();
-        var originalDocument = kv1FormatParser.Parse(mainVdfContent);
-        var kv1FormatSerializer = new KeyValues1FormatSerializer();
+        var fixturePath = TestFixtures.GetPath("kv", "main.vdf");
+        var fixtureContent = File.ReadAllText(fixturePath);
+        var parser = new KeyValuesFormatParser();
+        var originalDocument = parser.Parse(fixtureContent);
+        var serializer = new KeyValues1FormatSerializer();
         using var writer = new StringWriter();
-        kv1FormatSerializer.Serialize(originalDocument, writer);
+        serializer.Serialize(originalDocument, writer);
         var serializedDocument = writer.ToString();
-        var reparsedDocument = kv1FormatParser.Parse(serializedDocument);
+        var reparsedDocument = parser.Parse(serializedDocument);
         Assert.Equivalent(originalDocument, reparsedDocument);
     }
 
