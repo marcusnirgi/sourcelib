@@ -20,7 +20,6 @@ public class KeyValues2FormatTests
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues2FormatParser();
         var document = parser.Parse(fixtureContent);
-        Console.WriteLine(document);
         Assert.Equal("<!-- dmx encoding keyvalues2 4 format model 22 -->", document.Header);
 
         var dmeModel = document.Body.FirstOrDefault(pair => pair.Key == "DmeModel");
@@ -42,5 +41,35 @@ public class KeyValues2FormatTests
             child.Value.String == "0951077f-9859-8c43-be3a-d65f97b60cd5"
         );
         Assert.NotNull(dmeModelChild);
+    }
+
+    [Fact]
+    public void Test_Roundtrips_Particle_PCF()
+    {
+        var fixturePath = TestFixtures.GetPath("kv2", "particle.pcf");
+        var fixtureContent = File.ReadAllText(fixturePath);
+        var parser = new KeyValues2FormatParser();
+        var document = parser.Parse(fixtureContent);
+        var writer = new StringWriter();
+        var serializer = new KeyValues2FormatSerializer();
+        serializer.Serialize(document, writer);
+        var serialized = writer.ToString();
+        var reparsedDocument = parser.Parse(serialized);
+        Assert.Equivalent(document, reparsedDocument);
+    }
+
+    [Fact]
+    public void Test_Roundtrips_Complex_DMX()
+    {
+        var fixturePath = TestFixtures.GetPath("kv2", "citizen_head.dmx");
+        var fixtureContent = File.ReadAllText(fixturePath);
+        var parser = new KeyValues2FormatParser();
+        var document = parser.Parse(fixtureContent);
+        var writer = new StringWriter();
+        var serializer = new KeyValues2FormatSerializer();
+        serializer.Serialize(document, writer);
+        var serialized = writer.ToString();
+        var reparsedDocument = parser.Parse(serialized);
+        Assert.Equivalent(document, reparsedDocument);
     }
 }

@@ -14,6 +14,7 @@ public static class KeyValues2PrimitiveConverter
             KeyValues2TypeHint.Quaternion => ValuePrimitive.FromString(value),
             KeyValues2TypeHint.Vector3 => ValuePrimitive.FromString(value),
             KeyValues2TypeHint.Element => ValuePrimitive.FromString(value),
+            KeyValues2TypeHint.Color => ValuePrimitive.FromString(value),
             _ => throw new NotSupportedException($"Unsupported KV2 primitive type '{typeHint}'"),
         };
     }

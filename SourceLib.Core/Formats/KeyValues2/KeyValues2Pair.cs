@@ -28,15 +28,25 @@ public sealed class KeyValues2ArrayValue
 {
     public KeyValueValue Value { get; }
     public string? TypeHint { get; }
+    public IReadOnlyList<KeyValues2Pair>? Children { get; }
 
-    private KeyValues2ArrayValue(KeyValueValue value, string? typeHint = null)
+    private KeyValues2ArrayValue(
+        KeyValueValue value,
+        string? typeHint = null,
+        IReadOnlyList<KeyValues2Pair>? children = null
+    )
     {
         Value = value;
         TypeHint = typeHint;
+        Children = children;
     }
 
-    public static KeyValues2ArrayValue FromValue(KeyValueValue value, string? typeHint = null)
+    public static KeyValues2ArrayValue FromValue(
+        KeyValueValue value,
+        string? typeHint = null,
+        IReadOnlyList<KeyValues2Pair>? children = null
+    )
     {
-        return new KeyValues2ArrayValue(value, typeHint);
+        return new KeyValues2ArrayValue(value, typeHint, children);
     }
 }

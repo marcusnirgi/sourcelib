@@ -124,9 +124,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
         if (lexer.PeekNextToken().Tag == LexerTag.LBrace)
         {
-            var value = ParseAnonymousObject(lexer, valueToken.Value);
-
-            return KeyValues2ArrayValue.FromValue(value.Value, value.TypeHint);
+            return ParseAnonymousObject(lexer, valueToken.Value);
         }
 
         if (typeHint == KeyValues2TypeHint.ElementArray)
@@ -149,7 +147,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
         );
     }
 
-    private KeyValues2Pair ParseAnonymousObject(Lexer lexer, string typeHint)
+    private KeyValues2ArrayValue ParseAnonymousObject(Lexer lexer, string typeHint)
     {
         lexer.NextToken();
 
@@ -172,8 +170,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             pairs.Add(ParsePairOrObjectOrArray(lexer, nextToken.Value));
         }
 
-        return new KeyValues2Pair(
-            typeHint,
+        return KeyValues2ArrayValue.FromValue(
             KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
             typeHint,
             pairs.ToImmutableList()
