@@ -14,12 +14,57 @@ public class KeyValues3FormatTests
     }
 
     [Fact]
-    public void Test_Parses_Example()
+    public void Test_Parses_Model()
+    {
+        var fixturePath = TestFixtures.GetPath("kv3", "omni.vmdl");
+        var fixtureContent = File.ReadAllText(fixturePath);
+        var parser = new KeyValues3FormatParser();
+        var document = parser.Parse(fixtureContent);
+        Console.WriteLine(document);
+        var rootNode = document.Body.FirstOrDefault(pair => pair.Key == "rootNode");
+        Assert.NotNull(rootNode);
+        Assert.NotNull(rootNode.Children);
+        var rootNodeChildren = rootNode.Children.FirstOrDefault(pair => pair.Key == "children");
+        Assert.NotNull(rootNodeChildren);
+        Assert.NotNull(rootNodeChildren.Array);
+        var physicsShapeList = rootNodeChildren.Array.FirstOrDefault(arrValue =>
+            arrValue.Children?.FirstOrDefault(pair => pair.Key == "_class")?.Value.String
+            == "PhysicsShapeList"
+        );
+        Assert.NotNull(physicsShapeList);
+    }
+
+    [Fact]
+    public void Test_Roundtrips_Example()
     {
         var fixturePath = TestFixtures.GetPath("kv3", "example.kv3");
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues3FormatParser();
         var document = parser.Parse(fixtureContent);
-        Console.WriteLine(document);
+        Assert.Equal(
+            "<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->",
+            document.Header
+        );
+        var writer = new StringWriter();
+        var serializer = new KeyValues3FormatSerializer();
+        serializer.Serialize(document, writer);
+        var serialized = writer.ToString();
+        var reparsedDocument = parser.Parse(serialized);
+        Assert.Equivalent(document, reparsedDocument);
+    }
+
+    [Fact]
+    public void Test_Roundtrips_Model()
+    {
+        var fixturePath = TestFixtures.GetPath("kv3", "omni.vmdl");
+        var fixtureContent = File.ReadAllText(fixturePath);
+        var parser = new KeyValues3FormatParser();
+        var document = parser.Parse(fixtureContent);
+        var writer = new StringWriter();
+        var serializer = new KeyValues3FormatSerializer();
+        serializer.Serialize(document, writer);
+        var serialized = writer.ToString();
+        var reparsedDocument = parser.Parse(serialized);
+        Assert.Equivalent(document, reparsedDocument);
     }
 }

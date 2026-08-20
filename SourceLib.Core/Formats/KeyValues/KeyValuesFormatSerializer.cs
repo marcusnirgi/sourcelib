@@ -63,9 +63,8 @@ public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValues
                 break;
 
             case ValuePrimitiveType.Float:
-                writer.Write(value.Float);
+                writer.Write(ValuePrimitiveFormatter.FormatFloat(value.Float));
                 break;
-
             case ValuePrimitiveType.Boolean:
                 writer.Write(value.Boolean);
                 break;

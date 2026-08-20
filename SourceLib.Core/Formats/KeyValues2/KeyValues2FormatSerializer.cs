@@ -79,7 +79,7 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
         {
             ValuePrimitiveType.String => primitive.String,
             ValuePrimitiveType.Integer => primitive.Integer.ToString(),
-            ValuePrimitiveType.Float => primitive.Float.ToString(),
+            ValuePrimitiveType.Float => ValuePrimitiveFormatter.FormatFloat(primitive.Float),
             ValuePrimitiveType.Boolean => primitive.Boolean ? "1" : "0",
             _ => throw new InvalidOperationException(
                 $"Unsupported primitive type '{primitive.Type}'."

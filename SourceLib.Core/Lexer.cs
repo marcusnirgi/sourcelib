@@ -327,3 +327,14 @@ public class Lexer
         _nextToken = state.nextToken;
     }
 }
+
+public sealed class UnexpectedTokenException : Exception
+{
+    public LexerToken Token { get; }
+
+    public UnexpectedTokenException(LexerToken token)
+        : base($"Unexpected token '{token.Value}'")
+    {
+        Token = token;
+    }
+}

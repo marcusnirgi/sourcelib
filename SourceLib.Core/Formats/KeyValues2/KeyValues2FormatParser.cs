@@ -66,10 +66,10 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
                 return ParseArray(lexer, key, typeHint);
             }
 
-            throw new Exception($"Unexpected tertiary token '{valueToken.Value}'");
+            throw new UnexpectedTokenException(valueToken);
         }
 
-        throw new Exception($"Unexpected secondary token '{nextToken.Value}'");
+        throw new UnexpectedTokenException(nextToken);
     }
 
     public KeyValues2Pair ParsePair(Lexer lexer, string key, string typeHint)
@@ -119,7 +119,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
         if (valueToken.Tag != LexerTag.String)
         {
-            throw new Exception($"Unexpected token in array '{valueToken.Value}'");
+            throw new UnexpectedTokenException(valueToken);
         }
 
         if (lexer.PeekNextToken().Tag == LexerTag.LBrace)
@@ -133,7 +133,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
             if (actualValue.Tag != LexerTag.String)
             {
-                throw new Exception($"Unexpected token in array '{actualValue.Value}'");
+                throw new UnexpectedTokenException(actualValue);
             }
 
             return KeyValues2ArrayValue.FromValue(
@@ -164,7 +164,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
             if (nextToken.Tag != LexerTag.String)
             {
-                throw new Exception($"Unexpected token '{nextToken.Value}' in array object");
+                throw new UnexpectedTokenException(nextToken);
             }
 
             pairs.Add(ParsePairOrObjectOrArray(lexer, nextToken.Value));
@@ -200,7 +200,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             }
             else
             {
-                throw new Exception($"Unexpected token '{nextToken.Value}' in object");
+                throw new UnexpectedTokenException(nextToken);
             }
         }
 

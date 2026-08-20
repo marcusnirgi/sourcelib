@@ -1,0 +1,48 @@
+{
+	rootNode =
+	{
+		children =
+		[
+			{
+				_class = "MaterialGroupList"
+				children =
+				[
+					{
+						_class = "DefaultMaterialGroup"
+						remaps =
+						[
+							{
+								from = "omni.vmat"
+								to = "materials/models/editor/omni.vmat"
+							},
+						]
+						use_global_default = false
+					},
+				]
+			},
+			{
+				_class = "PhysicsShapeList"
+				children =
+				[
+					{
+						_class = "PhysicsHullFromRender"
+						surface_prop = "default"
+						faceMergeAngle = 20.0
+						maxHullVertices = 32
+					},
+				]
+			},
+			{
+				_class = "RenderMeshList"
+				children =
+				[
+					{
+						_class = "RenderMeshFile"
+						filename = "models/editor/dmx/omni.dmx"
+						import_scale = 1.0
+					},
+				]
+			},
+		]
+	}
+}

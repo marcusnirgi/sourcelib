@@ -46,7 +46,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
         }
         else
         {
-            throw new Exception($"Unexpected token '{next.Value}'");
+            throw new UnexpectedTokenException(next);
         }
     }
 
@@ -69,7 +69,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
             }
             else
             {
-                throw new Exception($"Unexpected token in object '{nextToken.Value}'");
+                throw new UnexpectedTokenException(nextToken);
             }
         }
 
@@ -89,7 +89,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
 
         return new KeyValuesPair(
             key,
-            KeyValueValue.FromPrimitive(InferPrimitiveFromString(token.Value)),
+            KeyValueValue.FromPrimitive(ValuePrimitive.InferFromString(token.Value)),
             allTags
         );
     }
@@ -111,30 +111,5 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
         }
 
         return tags.ToImmutableList();
-    }
-
-    private ValuePrimitive InferPrimitiveFromString(string value)
-    {
-        if (value.Length == 0)
-        {
-            return ValuePrimitive.FromString(value);
-        }
-
-        if (double.TryParse(value, out var floatValue))
-        {
-            return ValuePrimitive.FromFloat(floatValue);
-        }
-
-        if (long.TryParse(value, out var longValue))
-        {
-            return ValuePrimitive.FromInteger(longValue);
-        }
-
-        if (bool.TryParse(value, out var boolValue))
-        {
-            return ValuePrimitive.FromBoolean(boolValue);
-        }
-
-        return ValuePrimitive.FromString(value);
     }
 }

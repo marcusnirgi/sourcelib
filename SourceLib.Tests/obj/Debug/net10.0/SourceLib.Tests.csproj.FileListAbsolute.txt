@@ -103,3 +103,4 @@
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv2/citizen_head.dmx
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv2/particle.pcf
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv3/example.kv3
+/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv3/omni.vmdl
