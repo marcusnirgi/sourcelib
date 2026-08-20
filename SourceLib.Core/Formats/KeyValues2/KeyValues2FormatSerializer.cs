@@ -86,7 +86,7 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
             ),
         };
 
-        WriteQuoted(writer, serialized);
+        WriteQuoted(writer, serialized ?? string.Empty);
     }
 
     private void WriteArrayValue(TextWriter writer, KeyValues2ArrayValue value, int depth)
