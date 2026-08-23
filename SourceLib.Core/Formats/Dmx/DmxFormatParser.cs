@@ -19,7 +19,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
 
         var encodingVersion = (DmxHeaderBinaryEncodingVersion)header.EncodingVersion;
 
-        // Some quirky headers might have an extra '\n'.
+        // some quirky headers might have an extra '\n'.
         var next = reader.ReadByte();
 
         if (next == (byte)'\n')

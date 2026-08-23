@@ -1,3 +1,4 @@
+using System.Buffers;
 using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.Dmx;
 using SourceLib.Tests.GameData;
@@ -132,5 +133,27 @@ public class DmxFormatTests
             colors.Values,
             p => p.Value.Red == 106 && p.Value.Green == 0 && p.Value.Blue == 255
         );
+    }
+
+    [Fact]
+    public void Test_Roundtrips_Binary5_Model_18()
+    {
+        var fixturePath = TestFixtures.GetPath("dmx", "binary_5_model_18.dmx");
+        var fixtureContent = File.ReadAllBytes(fixturePath);
+        var parser = new DmxFormatParser();
+        var originalDocument = parser.Parse(fixtureContent);
+
+        var buffer = new ArrayBufferWriter<byte>();
+        var serializer = new DmxFormatSerializer();
+        serializer.Serialize(originalDocument, buffer);
+
+        var serializedBytes = buffer.WrittenSpan;
+        Assert.True(
+            fixtureContent.AsSpan().SequenceEqual(serializedBytes),
+            $"Serialized DMX differs from fixture."
+        );
+
+        var reparsedDocument = parser.Parse(buffer.WrittenSpan.ToArray());
+        Assert.Equivalent(originalDocument, reparsedDocument);
     }
 }
