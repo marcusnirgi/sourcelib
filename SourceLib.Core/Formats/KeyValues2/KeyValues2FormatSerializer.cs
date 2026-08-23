@@ -1,3 +1,4 @@
+using System.Globalization;
 using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues2;
@@ -148,7 +149,10 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
                 break;
 
             case EngineTime timeValue:
-                WriteQuoted(writer, timeValue.Value.ToString() ?? "null");
+                WriteQuoted(
+                    writer,
+                    timeValue.Value.Seconds.ToString("R", CultureInfo.InvariantCulture)
+                );
                 break;
 
             case EngineColor4 colorValue:

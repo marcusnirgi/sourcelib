@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues2;
 
@@ -22,20 +21,12 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
                     break;
 
                 case LexerTag.String:
-                    var pair = ParsePairOrObjectOrArray(lexer, nextToken.Value);
-                    body.Add(pair);
+                    body.Add(ParsePairOrObjectOrArray(lexer, nextToken.Value));
                     break;
             }
         }
 
-        var document = new KeyValues2Document() { Body = body };
-
-        if (header != null)
-        {
-            document.Header = header;
-        }
-
-        return document;
+        return new KeyValues2Document { Header = header, Body = body.ToImmutableList() };
     }
 
     public KeyValues2Pair ParsePairOrObjectOrArray(Lexer lexer, string key)
@@ -43,9 +34,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
         var nextToken = lexer.PeekNextToken();
 
         if (nextToken.Tag == LexerTag.LBrace)
-        {
             return ParseObject(lexer, key);
-        }
 
         if (nextToken.Tag == LexerTag.String)
         {
@@ -53,19 +42,13 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             var valueToken = lexer.PeekNextToken();
 
             if (valueToken.Tag == LexerTag.String)
-            {
                 return ParsePair(lexer, key, typeHint);
-            }
 
             if (valueToken.Tag == LexerTag.LBrace)
-            {
                 return ParseObject(lexer, key, typeHint);
-            }
 
             if (valueToken.Tag == LexerTag.LBracket)
-            {
                 return ParseArray(lexer, key, typeHint);
-            }
 
             throw new UnexpectedTokenException(valueToken);
         }
@@ -76,6 +59,9 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
     public KeyValues2Pair ParsePair(Lexer lexer, string key, string typeHint)
     {
         var valueToken = lexer.NextToken();
+
+        if (valueToken.Tag != LexerTag.String)
+            throw new UnexpectedTokenException(valueToken);
 
         return new KeyValues2Pair(
             key,
@@ -103,7 +89,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             values.Add(ParseArrayValue(lexer, typeHint));
         }
 
-        return new KeyValues2Pair(key, null, typeHint, null, values);
+        return new KeyValues2Pair(key, null, typeHint, null, values.ToImmutableList());
     }
 
     private KeyValues2ArrayItem ParseArrayValue(Lexer lexer, string typeHint)
@@ -111,28 +97,30 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
         var valueToken = lexer.NextToken();
 
         if (valueToken.Tag != LexerTag.String)
-        {
             throw new UnexpectedTokenException(valueToken);
-        }
 
         if (lexer.PeekNextToken().Tag == LexerTag.LBrace)
-        {
             return ParseAnonymousObject(lexer, valueToken.Value);
-        }
 
         if (typeHint == KeyValues2TypeHint.ElementArray)
         {
             var actualValue = lexer.NextToken();
 
             if (actualValue.Tag != LexerTag.String)
-            {
                 throw new UnexpectedTokenException(actualValue);
-            }
 
-            return new KeyValues2ArrayItem(new EngineString(actualValue.Value), valueToken.Value);
+            return new KeyValues2ArrayItem(
+                KeyValues2EngineValueConverter.ToPrimitive(
+                    KeyValues2TypeHint.Element,
+                    actualValue.Value
+                ),
+                KeyValues2TypeHint.Element
+            );
         }
 
-        return new KeyValues2ArrayItem(new EngineString(valueToken.Value));
+        var value = KeyValues2EngineValueConverter.ToPrimitive(typeHint[..^6], valueToken.Value);
+
+        return new KeyValues2ArrayItem(value);
     }
 
     private KeyValues2ArrayItem ParseAnonymousObject(Lexer lexer, string typeHint)
@@ -146,14 +134,10 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             var nextToken = lexer.NextToken();
 
             if (nextToken.Tag == LexerTag.RBrace)
-            {
                 break;
-            }
 
             if (nextToken.Tag != LexerTag.String)
-            {
                 throw new UnexpectedTokenException(nextToken);
-            }
 
             pairs.Add(ParsePairOrObjectOrArray(lexer, nextToken.Value));
         }
@@ -172,20 +156,12 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             var nextToken = lexer.NextToken();
 
             if (nextToken.Tag == LexerTag.RBrace)
-            {
                 break;
-            }
 
-            if (nextToken.Tag == LexerTag.String)
-            {
-                var pair = ParsePairOrObjectOrArray(lexer, nextToken.Value);
-
-                pairList.Add(pair);
-            }
-            else
-            {
+            if (nextToken.Tag != LexerTag.String)
                 throw new UnexpectedTokenException(nextToken);
-            }
+
+            pairList.Add(ParsePairOrObjectOrArray(lexer, nextToken.Value));
         }
 
         return new KeyValues2Pair(key, null, typeHint, pairList.ToImmutableList());

@@ -4,14 +4,21 @@ namespace SourceLib.Core.Formats.Dmx;
 
 public sealed class DmxAttribute
 {
-    public string Key { get; set; }
-    public DmxTypeIndex TypeIndex { get; set; }
-    public EngineValue Value { get; set; }
+    public string Key { get; }
+    public DmxTypeIndex TypeIndex { get; }
+    public EngineValue Value { get; }
+    public DmxElement? ReferencedElement { get; }
 
-    public DmxAttribute(string key, DmxTypeIndex typeIndex, EngineValue value)
+    public DmxAttribute(
+        string key,
+        DmxTypeIndex typeIndex,
+        EngineValue value,
+        DmxElement? referencedElement = null
+    )
     {
         Key = key;
         TypeIndex = typeIndex;
         Value = value;
+        ReferencedElement = referencedElement;
     }
 }

@@ -2,7 +2,7 @@ using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.KeyValues3;
 using SourceLib.Tests.GameData;
 
-namespace SourceLib.Core.Formats;
+namespace SourceLib.Tests.Formats;
 
 [Collection("Game")]
 public class KeyValues3FormatTests

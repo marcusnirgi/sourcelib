@@ -2,7 +2,7 @@ using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.KeyValues2;
 using SourceLib.Tests.GameData;
 
-namespace SourceLib.Core.Formats;
+namespace SourceLib.Tests.Formats;
 
 [Collection("Game")]
 public class KeyValues2FormatTests
@@ -21,7 +21,7 @@ public class KeyValues2FormatTests
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues2FormatParser();
         var document = parser.Parse(fixtureContent);
-        Assert.Equal("<!-- dmx encoding keyvalues2 4 format model 22 -->", document.Header);
+        Assert.Equal("<!-- dmx encoding keyvalues2 5 format model 18 -->", document.Header);
 
         var dmeModel = document.Body.FirstOrDefault(pair => pair.Key == "DmeModel");
         Assert.NotNull(dmeModel);
@@ -37,7 +37,7 @@ public class KeyValues2FormatTests
         Assert.Equal(11, dmeModelChildrenArray.Array.Count);
 
         var dmeModelChild = dmeModelChildrenArray.Array!.FirstOrDefault(child =>
-            ((EngineString)child.Value!).Value == "0951077f-9859-8c43-be3a-d65f97b60cd5"
+            ((EngineGuid)child.Value!).Value == Guid.Parse("0951077f-9859-8c43-be3a-d65f97b60cd5")
         );
         Assert.NotNull(dmeModelChild);
     }

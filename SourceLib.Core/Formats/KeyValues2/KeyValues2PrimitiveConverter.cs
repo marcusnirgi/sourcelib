@@ -14,7 +14,7 @@ public static class KeyValues2EngineValueConverter
             KeyValues2TypeHint.Float => new EngineFloat(float.Parse(value)),
             KeyValues2TypeHint.String => new EngineString(value),
             KeyValues2TypeHint.ElementId => new EngineGuid(Guid.Parse(value)),
-            KeyValues2TypeHint.Element => new EngineString(value),
+            KeyValues2TypeHint.Element => new EngineGuid(Guid.Parse(value)),
             KeyValues2TypeHint.Binary => new EngineBytes(Convert.FromHexString(value)),
             KeyValues2TypeHint.Time => new EngineTime(float.Parse(value)),
             KeyValues2TypeHint.Color => new EngineColor4(ParseColor(value)),

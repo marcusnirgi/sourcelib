@@ -1,8 +1,35 @@
-<!-- dmx encoding keyvalues2 4 format model 22 -->
+<!-- dmx encoding keyvalues2 5 format model 18 -->
 "DmElement"
 {
 	"id" "elementid" "4cdae220-77fc-074c-a2e1-5ee33023bac0"
 	"name" "string" "root"
+	"time_thing" "time" "3.0"
+  "time_things" "time_array"
+  [
+      "0.0",
+      "1.5",
+      "3.0",
+  ]
+	"vec2_thing" "vector2" "30.0 60.0"
+	"color_thing" "color" "255 162 0 255"
+	"color_things" "color_array"
+	[
+		"255 162 0 255",
+		"106 0 255 255",
+		"85 0 255 255",
+	]
+	"quaternion_things" "quaternion_array"
+	[
+		"0 0 0 0",
+		"3 4 5 6",
+	]
+	"bool_things" "bool_array"
+	[
+		"0",
+		"1",
+		"0",
+		"1"
+	]
 	"vsDmxIO_exportTags" "DmElement"
 	{
 		"id" "elementid" "544748ae-9ae6-fe48-931f-0b26e016b18c"

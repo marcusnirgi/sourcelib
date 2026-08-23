@@ -104,13 +104,9 @@
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv3/example.kv3
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv3/omni.vmdl
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_1_model_1.dmx
+/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_5_model_18.dmx
+/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv2/citizen_head_text.dmx
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_2_model_1.dmx
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_3_model_1.dmx
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_4_model_1.dmx
 /home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_5_model_1.dmx
-/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_5_model_18.dmx
-/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/invalid_type_marker.pre
-/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/keyvalues2_4_model_22.dmx
-/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/binary_1_model_1_text.dmx
-/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/dmx/citizen_head_binary_1_model_1.dmx
-/home/marcus/Projects/sourcelib/SourceLib.Tests/bin/Debug/net10.0/Fixtures/kv2/citizen_head_text.dmx

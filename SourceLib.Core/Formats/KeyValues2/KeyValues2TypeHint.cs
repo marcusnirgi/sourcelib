@@ -17,6 +17,7 @@ public static class KeyValues2TypeHint
     public const string Vector3 = "vector3";
     public const string Vector4 = "vector4";
     public const string Vector3Array = "vector3_array";
+    public const string Vector4Array = "vector4_array";
     public const string Quaternion = "quaternion";
     public const string QuaternionArray = "quaternion_array";
     public const string Color = "color";
