@@ -353,13 +353,13 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
             }
 
             case DmxTypeIndex.IntArray:
-                return (ReadArray(reader, static r => new EngineInt(r.ReadInt32())), null);
+                return (ReadArray(reader, r => new EngineInt(r.ReadInt32())), null);
 
             case DmxTypeIndex.FloatArray:
-                return (ReadArray(reader, static r => new EngineFloat(r.ReadSingle())), null);
+                return (ReadArray(reader, r => new EngineFloat(r.ReadSingle())), null);
 
             case DmxTypeIndex.BoolArray:
-                return (ReadArray(reader, static r => new EngineBool(r.ReadByte() != 0)), null);
+                return (ReadArray(reader, r => new EngineBool(r.ReadByte() != 0)), null);
 
             case DmxTypeIndex.StringArray:
             {

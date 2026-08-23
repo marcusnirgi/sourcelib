@@ -26,6 +26,11 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             }
         }
 
+        if (header == null)
+        {
+            throw new InvalidDataException("Missing header for keyvalues2 document");
+        }
+
         return new KeyValues2Document { Header = header, Body = body.ToImmutableList() };
     }
 
