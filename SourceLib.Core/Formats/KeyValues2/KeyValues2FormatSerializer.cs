@@ -69,21 +69,15 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
         writer.WriteLine();
     }
 
-    private void WritePrimitive(TextWriter writer, KeyValueValue value)
+    private void WritePrimitive(TextWriter writer, ValuePrimitive value)
     {
-        var primitive =
-            value.Primitive
-            ?? throw new InvalidOperationException("KeyValues2 value has no primitive value.");
-
-        var serialized = primitive.Type switch
+        var serialized = value.Type switch
         {
-            ValuePrimitiveType.String => primitive.String,
-            ValuePrimitiveType.Integer => primitive.Integer.ToString(),
-            ValuePrimitiveType.Float => ValuePrimitiveFormatter.FormatFloat(primitive.Float),
-            ValuePrimitiveType.Boolean => primitive.Boolean ? "1" : "0",
-            _ => throw new InvalidOperationException(
-                $"Unsupported primitive type '{primitive.Type}'."
-            ),
+            ValuePrimitiveType.String => value.String,
+            ValuePrimitiveType.Integer => value.Integer.ToString(),
+            ValuePrimitiveType.Float => ValuePrimitiveFormatter.FormatFloat(value.Float),
+            ValuePrimitiveType.Boolean => value.Boolean ? "1" : "0",
+            _ => throw new InvalidOperationException($"Unsupported primitive type '{value.Type}'."),
         };
 
         WriteQuoted(writer, serialized ?? string.Empty);

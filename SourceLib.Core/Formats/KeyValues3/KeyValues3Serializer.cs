@@ -91,35 +91,31 @@ public sealed class KeyValues3FormatSerializer : ITextFormatSerializer<KeyValues
         writer.WriteLine(',');
     }
 
-    private void WriteValue(TextWriter writer, KeyValueValue value)
+    private void WriteValue(TextWriter writer, ValuePrimitive value)
     {
-        var primitive =
-            value.Primitive
-            ?? throw new InvalidOperationException("KeyValues3 value has no primitive value.");
-
-        switch (primitive.Type)
+        switch (value.Type)
         {
             case ValuePrimitiveType.String:
-                WriteQuoted(writer, primitive.String ?? string.Empty);
+                WriteQuoted(writer, value.String ?? string.Empty);
                 break;
 
             case ValuePrimitiveType.Integer:
                 writer.Write(
-                    primitive.Integer.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                    value.Integer.ToString(System.Globalization.CultureInfo.InvariantCulture)
                 );
                 break;
 
             case ValuePrimitiveType.Float:
-                writer.Write(ValuePrimitiveFormatter.FormatFloat(primitive.Float));
+                writer.Write(ValuePrimitiveFormatter.FormatFloat(value.Float));
                 break;
 
             case ValuePrimitiveType.Boolean:
-                writer.Write(primitive.Boolean ? "true" : "false");
+                writer.Write(value.Boolean ? "true" : "false");
                 break;
 
             default:
                 throw new InvalidOperationException(
-                    $"Unsupported KV3 primitive type: {primitive.Type}"
+                    $"Unsupported KV3 primitive type: {value.Type}"
                 );
         }
     }

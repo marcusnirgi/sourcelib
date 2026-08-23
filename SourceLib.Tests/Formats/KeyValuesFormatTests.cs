@@ -26,7 +26,7 @@ public class KeyValues1FormatTests
 
         Assert.Equal(
             "Value1",
-            document.Body.FirstOrDefault(pair => pair.Key == "Key1")?.Value?.String
+            document.Body.FirstOrDefault(pair => pair.Key == "Key1")?.Value.String
         );
 
         var listValue = document.Body.FirstOrDefault(pair => pair.Key == "List");

@@ -59,10 +59,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
                     return new KeyValues3Pair(key, ParseSuffixedString(lexer, valueToken.Value));
                 }
 
-                return new KeyValues3Pair(
-                    key,
-                    KeyValueValue.FromPrimitive(ValuePrimitive.InferFromString(valueToken.Value))
-                );
+                return new KeyValues3Pair(key, ValuePrimitive.InferFromString(valueToken.Value));
             }
             case LexerTag.LBrace:
                 return ParseObject(lexer, key);
@@ -75,7 +72,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
         }
     }
 
-    private KeyValueValue ParseSuffixedString(Lexer lexer, string prefix)
+    private ValuePrimitive ParseSuffixedString(Lexer lexer, string prefix)
     {
         var value = lexer.NextToken();
 
@@ -84,7 +81,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
             throw new UnexpectedTokenException(value);
         }
 
-        return KeyValueValue.FromPrimitive(ValuePrimitive.FromString($"{prefix}:{value.Value}"));
+        return ValuePrimitive.FromString($"{prefix}:{value.Value}");
     }
 
     private KeyValues3Pair ParseArray(Lexer lexer, string key)
@@ -130,7 +127,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
 
         return new KeyValues3Pair(
             key,
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             array: values.ToImmutableList()
         );
     }
@@ -139,9 +136,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
     {
         var token = lexer.NextToken();
 
-        return KeyValues3ArrayValue.FromValue(
-            KeyValueValue.FromPrimitive(ValuePrimitive.InferFromString(token.Value))
-        );
+        return KeyValues3ArrayValue.FromValue(ValuePrimitive.InferFromString(token.Value));
     }
 
     private KeyValues3ArrayValue ParseAnonymousArray(Lexer lexer)
@@ -186,7 +181,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
         }
 
         return KeyValues3ArrayValue.FromValue(
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             array: values.ToImmutableList()
         );
     }
@@ -216,7 +211,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
         }
 
         return KeyValues3ArrayValue.FromValue(
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             children: pairs.ToImmutableList()
         );
     }
@@ -247,7 +242,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
 
         return new KeyValues3Pair(
             key,
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             children: pairs.ToImmutableList()
         );
     }

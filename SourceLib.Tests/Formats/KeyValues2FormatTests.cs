@@ -16,7 +16,7 @@ public class KeyValues2FormatTests
     [Fact]
     public void Test_Parses_Complex_DMX()
     {
-        var fixturePath = TestFixtures.GetPath("kv2", "citizen_head.dmx");
+        var fixturePath = TestFixtures.GetPath("kv2", "citizen_head_text.dmx");
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues2FormatParser();
         var document = parser.Parse(fixtureContent);
@@ -61,7 +61,7 @@ public class KeyValues2FormatTests
     [Fact]
     public void Test_Roundtrips_Complex_DMX()
     {
-        var fixturePath = TestFixtures.GetPath("kv2", "citizen_head.dmx");
+        var fixturePath = TestFixtures.GetPath("kv2", "citizen_head_text.dmx");
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues2FormatParser();
         var document = parser.Parse(fixtureContent);

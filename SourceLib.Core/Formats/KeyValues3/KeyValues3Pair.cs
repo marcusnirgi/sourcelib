@@ -3,13 +3,13 @@ namespace SourceLib.Core.Formats.KeyValues3;
 public sealed class KeyValues3Pair : IKeyValuePair
 {
     public string Key { get; }
-    public KeyValueValue Value { get; }
+    public ValuePrimitive Value { get; }
     public IReadOnlyList<KeyValues3Pair>? Children { get; }
     public IReadOnlyList<KeyValues3ArrayValue>? Array { get; }
 
     public KeyValues3Pair(
         string key,
-        KeyValueValue value,
+        ValuePrimitive value,
         IReadOnlyList<KeyValues3Pair>? children = null,
         IReadOnlyList<KeyValues3ArrayValue>? array = null
     )
@@ -23,12 +23,12 @@ public sealed class KeyValues3Pair : IKeyValuePair
 
 public sealed class KeyValues3ArrayValue
 {
-    public KeyValueValue Value { get; }
+    public ValuePrimitive Value { get; }
     public IReadOnlyList<KeyValues3Pair>? Children { get; }
     public IReadOnlyList<KeyValues3ArrayValue>? Array { get; }
 
     private KeyValues3ArrayValue(
-        KeyValueValue value,
+        ValuePrimitive value,
         IReadOnlyList<KeyValues3Pair>? children = null,
         IReadOnlyList<KeyValues3ArrayValue>? array = null
     )
@@ -39,7 +39,7 @@ public sealed class KeyValues3ArrayValue
     }
 
     public static KeyValues3ArrayValue FromValue(
-        KeyValueValue value,
+        ValuePrimitive value,
         IReadOnlyList<KeyValues3Pair>? children = null,
         IReadOnlyList<KeyValues3ArrayValue>? array = null
     )

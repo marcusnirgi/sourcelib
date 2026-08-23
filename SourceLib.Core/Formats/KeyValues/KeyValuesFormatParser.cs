@@ -75,7 +75,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
 
         return new KeyValuesPair(
             key,
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             tags,
             pairList.ToImmutableList()
         );
@@ -87,11 +87,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
         var trailingTags = ParseTags(lexer);
         var allTags = tags.Concat(trailingTags).ToImmutableList();
 
-        return new KeyValuesPair(
-            key,
-            KeyValueValue.FromPrimitive(ValuePrimitive.InferFromString(token.Value)),
-            allTags
-        );
+        return new KeyValuesPair(key, ValuePrimitive.InferFromString(token.Value), allTags);
     }
 
     private ImmutableList<string> ParseTags(Lexer lexer)

@@ -1,0 +1,16 @@
+<!-- dmx encoding keyvalues2 1 format model 1 -->
+"DmElement"
+{
+	"id" "elementid" "5114cfd2-b98f-8839-82a0-3feb8bcae2ab"
+	"name" "string" "Scene"
+	"id" "string" "d2cf1451-8fb9-3988-82a0-3feb8bcae2ab"
+	"skeleton" "element" "873c37bb-2e74-4b30-97d5-0ccce446b5e0"
+	"model" "element" "873c37bb-2e74-4b30-97d5-0ccce446b5e0"
+}
+
+"DmeDag"
+{
+	"id" "elementid" "873c37bb-2e74-4b30-97d5-0ccce446b5e0"
+	"name" "string" ""
+	"id" "string" "bb373c87-742e-304b-97d5-0ccce446b5e0"
+}

@@ -35,7 +35,7 @@ public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValues
         else
         {
             writer.Write(' ');
-            WritePrimitive(writer, pair.Value.Primitive!.Value);
+            WritePrimitive(writer, pair.Value);
             writer.WriteLine();
         }
     }

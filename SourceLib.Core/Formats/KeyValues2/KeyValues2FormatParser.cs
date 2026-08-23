@@ -78,9 +78,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
         return new KeyValues2Pair(
             key,
-            KeyValueValue.FromPrimitive(
-                KeyValues2PrimitiveConverter.ToPrimitive(typeHint, valueToken.Value)
-            ),
+            KeyValues2PrimitiveConverter.ToPrimitive(typeHint, valueToken.Value),
             typeHint
         );
     }
@@ -106,7 +104,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
         return new KeyValues2Pair(
             key,
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             typeHint,
             null,
             values.ToImmutableList()
@@ -137,14 +135,12 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             }
 
             return KeyValues2ArrayValue.FromValue(
-                KeyValueValue.FromPrimitive(ValuePrimitive.FromString(actualValue.Value)),
+                ValuePrimitive.FromString(actualValue.Value),
                 valueToken.Value
             );
         }
 
-        return KeyValues2ArrayValue.FromValue(
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(valueToken.Value))
-        );
+        return KeyValues2ArrayValue.FromValue(ValuePrimitive.FromString(valueToken.Value));
     }
 
     private KeyValues2ArrayValue ParseAnonymousObject(Lexer lexer, string typeHint)
@@ -171,7 +167,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
         }
 
         return KeyValues2ArrayValue.FromValue(
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             typeHint,
             pairs.ToImmutableList()
         );
@@ -206,7 +202,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
         return new KeyValues2Pair(
             key,
-            KeyValueValue.FromPrimitive(ValuePrimitive.FromString(string.Empty)),
+            ValuePrimitive.FromString(string.Empty),
             typeHint,
             pairList.ToImmutableList()
         );
