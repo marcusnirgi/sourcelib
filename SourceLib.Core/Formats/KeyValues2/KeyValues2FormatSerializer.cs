@@ -28,8 +28,8 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
             WriteIndent(writer, depth);
             writer.WriteLine("[");
 
-            foreach (var item in pair.Array)
-                WriteArrayItem(writer, item, depth + 1);
+            for (var i = 0; i < pair.Array.Count; i++)
+                WriteArrayItem(writer, pair.Array[i], depth + 1, i < pair.Array.Count - 1);
 
             WriteIndent(writer, depth);
             writer.WriteLine("]");
@@ -64,7 +64,7 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
         writer.WriteLine();
     }
 
-    private void WriteArrayItem(TextWriter writer, KeyValues2ArrayItem item, int depth)
+    private void WriteArrayItem(TextWriter writer, KeyValues2ArrayItem item, int depth, bool comma)
     {
         WriteIndent(writer, depth);
 
@@ -79,11 +79,16 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
 
             writer.WriteLine("[");
 
-            foreach (var child in item.Array)
-                WriteArrayItem(writer, child, depth + 1);
+            for (var i = 0; i < item.Array.Count; i++)
+                WriteArrayItem(writer, item.Array[i], depth + 1, i < item.Array.Count - 1);
 
             WriteIndent(writer, depth);
-            writer.WriteLine("]");
+            writer.Write(']');
+
+            if (comma)
+                writer.Write(',');
+
+            writer.WriteLine();
             return;
         }
 
@@ -102,7 +107,12 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
                 WritePair(writer, child, depth + 1);
 
             WriteIndent(writer, depth);
-            writer.WriteLine("}");
+            writer.Write('}');
+
+            if (comma)
+                writer.Write(',');
+
+            writer.WriteLine();
             return;
         }
 
@@ -113,6 +123,10 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
         }
 
         WriteValue(writer, item.Value);
+
+        if (comma)
+            writer.Write(',');
+
         writer.WriteLine();
     }
 
@@ -170,7 +184,7 @@ public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues
             case EngineVector3 vectorValue:
                 WriteQuoted(
                     writer,
-                    $"{vectorValue.Value.X} {vectorValue.Value.Y} {vectorValue.Value.Z}"
+                    $"{vectorValue.Value.X} {vectorValue.Value.Y} " + $"{vectorValue.Value.Z}"
                 );
                 break;
 
