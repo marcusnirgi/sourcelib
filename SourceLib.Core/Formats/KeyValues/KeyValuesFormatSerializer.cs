@@ -76,7 +76,7 @@ public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValues
     private static void WriteQuoted(TextWriter writer, string value)
     {
         writer.Write('"');
-        writer.Write(value);
+        writer.Write(value.Replace("\"", "\\\""));
         writer.Write('"');
     }
 
