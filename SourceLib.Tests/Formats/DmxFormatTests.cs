@@ -136,6 +136,28 @@ public class DmxFormatTests
     }
 
     [Fact]
+    public void Test_Roundtrips_Binary1_Model_1()
+    {
+        var fixturePath = TestFixtures.GetPath("dmx", "binary_1_model_1.dmx");
+        var fixtureContent = File.ReadAllBytes(fixturePath);
+        var parser = new DmxFormatParser();
+        var originalDocument = parser.Parse(fixtureContent);
+
+        var buffer = new ArrayBufferWriter<byte>();
+        var serializer = new DmxFormatSerializer();
+        serializer.Serialize(originalDocument, buffer);
+
+        var serializedBytes = buffer.WrittenSpan;
+        Assert.True(
+            fixtureContent.AsSpan().SequenceEqual(serializedBytes),
+            $"Serialized DMX differs from fixture."
+        );
+
+        var reparsedDocument = parser.Parse(buffer.WrittenSpan.ToArray());
+        Assert.Equivalent(originalDocument, reparsedDocument);
+    }
+
+    [Fact]
     public void Test_Roundtrips_Binary5_Model_18()
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_5_model_18.dmx");
