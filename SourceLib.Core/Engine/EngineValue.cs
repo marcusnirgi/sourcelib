@@ -1,7 +1,9 @@
+using System.Text.Json.Serialization;
 using SourceLib.Core.Engine.Math;
 
 namespace SourceLib.Core.Engine;
 
+[JsonConverter(typeof(EngineValueJsonConverter))]
 public abstract class EngineValue;
 
 public class EngineValue<TAnyValueType> : EngineValue

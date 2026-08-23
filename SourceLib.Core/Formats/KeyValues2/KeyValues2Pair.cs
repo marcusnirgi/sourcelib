@@ -1,52 +1,48 @@
+using SourceLib.Core.Engine;
+
 namespace SourceLib.Core.Formats.KeyValues2;
 
 public sealed class KeyValues2Pair : IKeyValuePair
 {
     public string Key { get; }
-    public ValuePrimitive Value { get; }
+    public EngineValue? Value { get; }
     public string? TypeHint { get; }
-    public IReadOnlyList<KeyValues2Pair>? Children { get; }
-    public IReadOnlyList<KeyValues2ArrayValue>? Array { get; }
+    public IReadOnlyList<KeyValues2Pair>? Object { get; }
+    public IReadOnlyList<KeyValues2ArrayItem>? Array { get; }
 
     public KeyValues2Pair(
         string key,
-        ValuePrimitive value,
+        EngineValue? value,
         string? typeHint = null,
-        IReadOnlyList<KeyValues2Pair>? children = null,
-        IReadOnlyList<KeyValues2ArrayValue>? array = null
+        IReadOnlyList<KeyValues2Pair>? obj = null,
+        IReadOnlyList<KeyValues2ArrayItem>? array = null
     )
     {
         Key = key;
         Value = value;
         TypeHint = typeHint;
-        Children = children;
+        Object = obj;
         Array = array;
     }
 }
 
-public sealed class KeyValues2ArrayValue
+public sealed class KeyValues2ArrayItem
 {
-    public ValuePrimitive Value { get; }
+    public EngineValue? Value { get; }
     public string? TypeHint { get; }
     public IReadOnlyList<KeyValues2Pair>? Children { get; }
+    public IReadOnlyList<KeyValues2ArrayItem>? Array { get; }
 
-    private KeyValues2ArrayValue(
-        ValuePrimitive value,
+    public KeyValues2ArrayItem(
+        EngineValue? value,
         string? typeHint = null,
-        IReadOnlyList<KeyValues2Pair>? children = null
+        IReadOnlyList<KeyValues2Pair>? obj = null,
+        IReadOnlyList<KeyValues2ArrayItem>? array = null
     )
     {
         Value = value;
         TypeHint = typeHint;
-        Children = children;
-    }
-
-    public static KeyValues2ArrayValue FromValue(
-        ValuePrimitive value,
-        string? typeHint = null,
-        IReadOnlyList<KeyValues2Pair>? children = null
-    )
-    {
-        return new KeyValues2ArrayValue(value, typeHint, children);
+        Children = obj;
+        Array = array;
     }
 }

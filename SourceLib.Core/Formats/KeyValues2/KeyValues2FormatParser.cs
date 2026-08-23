@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues2;
 
@@ -78,7 +79,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
 
         return new KeyValues2Pair(
             key,
-            KeyValues2PrimitiveConverter.ToPrimitive(typeHint, valueToken.Value),
+            KeyValues2EngineValueConverter.ToPrimitive(typeHint, valueToken.Value),
             typeHint
         );
     }
@@ -87,7 +88,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
     {
         lexer.NextToken();
 
-        var values = new List<KeyValues2ArrayValue>();
+        var values = new List<KeyValues2ArrayItem>();
 
         while (true)
         {
@@ -102,16 +103,10 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             values.Add(ParseArrayValue(lexer, typeHint));
         }
 
-        return new KeyValues2Pair(
-            key,
-            ValuePrimitive.FromString(string.Empty),
-            typeHint,
-            null,
-            values.ToImmutableList()
-        );
+        return new KeyValues2Pair(key, null, typeHint, null, values);
     }
 
-    private KeyValues2ArrayValue ParseArrayValue(Lexer lexer, string typeHint)
+    private KeyValues2ArrayItem ParseArrayValue(Lexer lexer, string typeHint)
     {
         var valueToken = lexer.NextToken();
 
@@ -134,16 +129,13 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
                 throw new UnexpectedTokenException(actualValue);
             }
 
-            return KeyValues2ArrayValue.FromValue(
-                ValuePrimitive.FromString(actualValue.Value),
-                valueToken.Value
-            );
+            return new KeyValues2ArrayItem(new EngineString(actualValue.Value), valueToken.Value);
         }
 
-        return KeyValues2ArrayValue.FromValue(ValuePrimitive.FromString(valueToken.Value));
+        return new KeyValues2ArrayItem(new EngineString(valueToken.Value));
     }
 
-    private KeyValues2ArrayValue ParseAnonymousObject(Lexer lexer, string typeHint)
+    private KeyValues2ArrayItem ParseAnonymousObject(Lexer lexer, string typeHint)
     {
         lexer.NextToken();
 
@@ -166,11 +158,7 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             pairs.Add(ParsePairOrObjectOrArray(lexer, nextToken.Value));
         }
 
-        return KeyValues2ArrayValue.FromValue(
-            ValuePrimitive.FromString(string.Empty),
-            typeHint,
-            pairs.ToImmutableList()
-        );
+        return new KeyValues2ArrayItem(null, typeHint, pairs.ToImmutableList());
     }
 
     public KeyValues2Pair ParseObject(Lexer lexer, string key, string? typeHint = null)
@@ -200,11 +188,6 @@ public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Documen
             }
         }
 
-        return new KeyValues2Pair(
-            key,
-            ValuePrimitive.FromString(string.Empty),
-            typeHint,
-            pairList.ToImmutableList()
-        );
+        return new KeyValues2Pair(key, null, typeHint, pairList.ToImmutableList());
     }
 }

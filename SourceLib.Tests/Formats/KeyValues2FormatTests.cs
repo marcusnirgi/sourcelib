@@ -1,3 +1,4 @@
+using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.KeyValues2;
 using SourceLib.Tests.GameData;
 
@@ -24,21 +25,19 @@ public class KeyValues2FormatTests
 
         var dmeModel = document.Body.FirstOrDefault(pair => pair.Key == "DmeModel");
         Assert.NotNull(dmeModel);
-        Assert.NotNull(dmeModel.Children);
-        var dmeModelName = dmeModel.Children.FirstOrDefault(pair => pair.Key == "name");
+        Assert.NotNull(dmeModel.Object);
+        var dmeModelName = dmeModel.Object.FirstOrDefault(pair => pair.Key == "name");
         Assert.NotNull(dmeModelName);
         Assert.Equal(KeyValues2TypeHint.String, dmeModelName.TypeHint);
-        Assert.Equal("3DS2021_Citizen_model", dmeModelName.Value.String);
+        Assert.Equal("3DS2021_Citizen_model", ((EngineString)dmeModelName.Value!)!.Value);
 
-        var dmeModelChildrenArray = dmeModel.Children.FirstOrDefault(pair =>
-            pair.Key == "children"
-        );
+        var dmeModelChildrenArray = dmeModel.Object.FirstOrDefault(pair => pair.Key == "children");
         Assert.NotNull(dmeModelChildrenArray);
         Assert.NotNull(dmeModelChildrenArray.Array);
         Assert.Equal(11, dmeModelChildrenArray.Array.Count);
 
         var dmeModelChild = dmeModelChildrenArray.Array!.FirstOrDefault(child =>
-            child.Value.String == "0951077f-9859-8c43-be3a-d65f97b60cd5"
+            ((EngineString)child.Value!).Value == "0951077f-9859-8c43-be3a-d65f97b60cd5"
         );
         Assert.NotNull(dmeModelChild);
     }

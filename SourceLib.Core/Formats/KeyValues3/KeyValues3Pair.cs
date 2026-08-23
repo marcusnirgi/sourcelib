@@ -1,34 +1,36 @@
+using SourceLib.Core.Engine;
+
 namespace SourceLib.Core.Formats.KeyValues3;
 
 public sealed class KeyValues3Pair : IKeyValuePair
 {
     public string Key { get; }
-    public ValuePrimitive Value { get; }
-    public IReadOnlyList<KeyValues3Pair>? Children { get; }
+    public EngineValue? Value { get; }
+    public IReadOnlyList<KeyValues3Pair>? Object { get; }
     public IReadOnlyList<KeyValues3ArrayValue>? Array { get; }
 
     public KeyValues3Pair(
         string key,
-        ValuePrimitive value,
-        IReadOnlyList<KeyValues3Pair>? children = null,
+        EngineValue? value = null,
+        IReadOnlyList<KeyValues3Pair>? obj = null,
         IReadOnlyList<KeyValues3ArrayValue>? array = null
     )
     {
         Key = key;
         Value = value;
-        Children = children;
+        Object = obj;
         Array = array;
     }
 }
 
 public sealed class KeyValues3ArrayValue
 {
-    public ValuePrimitive Value { get; }
+    public EngineValue? Value { get; }
     public IReadOnlyList<KeyValues3Pair>? Children { get; }
     public IReadOnlyList<KeyValues3ArrayValue>? Array { get; }
 
-    private KeyValues3ArrayValue(
-        ValuePrimitive value,
+    public KeyValues3ArrayValue(
+        EngineValue? value,
         IReadOnlyList<KeyValues3Pair>? children = null,
         IReadOnlyList<KeyValues3ArrayValue>? array = null
     )
@@ -36,14 +38,5 @@ public sealed class KeyValues3ArrayValue
         Value = value;
         Children = children;
         Array = array;
-    }
-
-    public static KeyValues3ArrayValue FromValue(
-        ValuePrimitive value,
-        IReadOnlyList<KeyValues3Pair>? children = null,
-        IReadOnlyList<KeyValues3ArrayValue>? array = null
-    )
-    {
-        return new KeyValues3ArrayValue(value, children, array);
     }
 }

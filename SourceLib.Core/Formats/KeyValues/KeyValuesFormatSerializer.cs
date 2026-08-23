@@ -1,3 +1,5 @@
+using SourceLib.Core.Engine;
+
 namespace SourceLib.Core.Formats.KeyValues;
 
 public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValuesDocument>
@@ -20,13 +22,13 @@ public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValues
         WriteQuoted(writer, pair.Key);
         WriteTags(writer, pair.Tags);
 
-        if (pair.Children != null)
+        if (pair.Object != null)
         {
             writer.WriteLine();
             WriteIndent(writer, indent);
             writer.WriteLine("{");
 
-            foreach (var child in pair.Children!)
+            foreach (var child in pair.Object!)
                 SerializePair(child, writer, indent + 1);
 
             WriteIndent(writer, indent);
@@ -35,7 +37,7 @@ public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValues
         else
         {
             writer.Write(' ');
-            WritePrimitive(writer, pair.Value);
+            WritePrimitive(writer, pair.Value ?? new EngineString("null"));
             writer.WriteLine();
         }
     }
@@ -50,23 +52,23 @@ public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValues
         }
     }
 
-    private static void WritePrimitive(TextWriter writer, ValuePrimitive value)
+    private static void WritePrimitive(TextWriter writer, EngineValue value)
     {
-        switch (value.Type)
+        switch (value)
         {
-            case ValuePrimitiveType.String:
-                WriteQuoted(writer, value.String!);
+            case EngineString stringValue:
+                WriteQuoted(writer, stringValue.Value);
                 break;
 
-            case ValuePrimitiveType.Integer:
-                writer.Write(value.Integer);
+            case EngineInt intValue:
+                writer.Write(intValue.Value);
                 break;
 
-            case ValuePrimitiveType.Float:
-                writer.Write(ValuePrimitiveFormatter.FormatFloat(value.Float));
+            case EngineFloat floatValue:
+                writer.Write(PrimitiveFormatter.FormatFloat(floatValue.Value));
                 break;
-            case ValuePrimitiveType.Boolean:
-                writer.Write(value.Boolean);
+            case EngineBool boolValue:
+                writer.Write(boolValue.Value);
                 break;
         }
     }

@@ -1,3 +1,4 @@
+using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.KeyValues;
 using SourceLib.Tests.GameData;
 
@@ -26,15 +27,14 @@ public class KeyValues1FormatTests
 
         Assert.Equal(
             "Value1",
-            document.Body.FirstOrDefault(pair => pair.Key == "Key1")?.Value.String
+            ((EngineString)document.Body.First(pair => pair.Key == "Key1").Value!).Value
         );
 
-        var listValue = document.Body.FirstOrDefault(pair => pair.Key == "List");
-        Assert.NotNull(listValue);
-        Assert.Single(listValue.Children!);
+        var listValue = document.Body.First(pair => pair.Key == "List");
+        Assert.Single(listValue.Object!);
         Assert.Equal(
             "InnerValue1",
-            listValue.Children!.FirstOrDefault(pair => pair.Key == "InnerKey1")?.Value.String
+            ((EngineString)listValue.Object!.First(pair => pair.Key == "InnerKey1").Value!)!.Value
         );
     }
 
@@ -48,18 +48,18 @@ public class KeyValues1FormatTests
         var document = parser.Parse(File.ReadAllText(path));
         var scheme = document.Body.FirstOrDefault(p => p.Key == "Scheme");
         Assert.NotNull(scheme);
-        var fonts = scheme.Children!.FirstOrDefault(p => p.Key == "Fonts");
+        var fonts = scheme.Object!.FirstOrDefault(p => p.Key == "Fonts");
         Assert.NotNull(fonts);
-        var defaultFont = fonts.Children!.FirstOrDefault(p => p.Key == "Default");
+        var defaultFont = fonts.Object!.FirstOrDefault(p => p.Key == "Default");
         Assert.NotNull(defaultFont);
 
-        var xboxFont = defaultFont.Children!.FirstOrDefault(p => p.Tags.Contains("$X360"));
+        var xboxFont = defaultFont.Object!.FirstOrDefault(p => p.Tags.Contains("$X360"));
         Assert.NotNull(xboxFont);
 
-        var name = xboxFont.Children!.FirstOrDefault(p => p.Key == "name");
+        var name = xboxFont.Object!.FirstOrDefault(p => p.Key == "name");
         Assert.NotNull(name);
 
-        Assert.Equal("Verdana", name.Value.String);
+        Assert.Equal("Verdana", ((EngineString)name.Value!)!.Value);
     }
 
     [Fact]

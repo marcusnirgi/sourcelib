@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues;
 
@@ -73,12 +74,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
             }
         }
 
-        return new KeyValuesPair(
-            key,
-            ValuePrimitive.FromString(string.Empty),
-            tags,
-            pairList.ToImmutableList()
-        );
+        return new KeyValuesPair(key, null, tags, pairList.ToImmutableList());
     }
 
     private KeyValuesPair ParsePair(Lexer lexer, string key, IReadOnlyList<string> tags)
@@ -87,7 +83,7 @@ public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
         var trailingTags = ParseTags(lexer);
         var allTags = tags.Concat(trailingTags).ToImmutableList();
 
-        return new KeyValuesPair(key, ValuePrimitive.InferFromString(token.Value), allTags);
+        return new KeyValuesPair(key, new EngineString(token.Value), allTags);
     }
 
     private ImmutableList<string> ParseTags(Lexer lexer)

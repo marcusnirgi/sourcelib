@@ -1,3 +1,4 @@
+using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.KeyValues3;
 using SourceLib.Tests.GameData;
 
@@ -23,13 +24,15 @@ public class KeyValues3FormatTests
         Console.WriteLine(document);
         var rootNode = document.Body.FirstOrDefault(pair => pair.Key == "rootNode");
         Assert.NotNull(rootNode);
-        Assert.NotNull(rootNode.Children);
-        var rootNodeChildren = rootNode.Children.FirstOrDefault(pair => pair.Key == "children");
+        Assert.NotNull(rootNode.Object);
+        var rootNodeChildren = rootNode.Object.FirstOrDefault(pair => pair.Key == "children");
         Assert.NotNull(rootNodeChildren);
         Assert.NotNull(rootNodeChildren.Array);
         var physicsShapeList = rootNodeChildren.Array.FirstOrDefault(arrValue =>
-            arrValue.Children?.FirstOrDefault(pair => pair.Key == "_class")?.Value.String
-            == "PhysicsShapeList"
+            (
+                (EngineString)
+                    arrValue.Children?.FirstOrDefault(pair => pair.Key == "_class")!.Value!
+            ).Value! == "PhysicsShapeList"
         );
         Assert.NotNull(physicsShapeList);
     }

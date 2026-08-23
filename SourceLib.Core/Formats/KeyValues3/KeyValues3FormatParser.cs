@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues3;
 
@@ -59,7 +60,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
                     return new KeyValues3Pair(key, ParseSuffixedString(lexer, valueToken.Value));
                 }
 
-                return new KeyValues3Pair(key, ValuePrimitive.InferFromString(valueToken.Value));
+                return new KeyValues3Pair(key, EngineValueInference.FromString(valueToken.Value));
             }
             case LexerTag.LBrace:
                 return ParseObject(lexer, key);
@@ -72,7 +73,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
         }
     }
 
-    private ValuePrimitive ParseSuffixedString(Lexer lexer, string prefix)
+    private EngineString ParseSuffixedString(Lexer lexer, string prefix)
     {
         var value = lexer.NextToken();
 
@@ -81,7 +82,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
             throw new UnexpectedTokenException(value);
         }
 
-        return ValuePrimitive.FromString($"{prefix}:{value.Value}");
+        return new EngineString($"{prefix}:{value.Value}");
     }
 
     private KeyValues3Pair ParseArray(Lexer lexer, string key)
@@ -125,18 +126,14 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
             }
         }
 
-        return new KeyValues3Pair(
-            key,
-            ValuePrimitive.FromString(string.Empty),
-            array: values.ToImmutableList()
-        );
+        return new KeyValues3Pair(key, null, null, values.ToImmutableList());
     }
 
     private KeyValues3ArrayValue ParseArrayPrimitive(Lexer lexer)
     {
         var token = lexer.NextToken();
 
-        return KeyValues3ArrayValue.FromValue(ValuePrimitive.InferFromString(token.Value));
+        return new KeyValues3ArrayValue(EngineValueInference.FromString(token.Value));
     }
 
     private KeyValues3ArrayValue ParseAnonymousArray(Lexer lexer)
@@ -180,10 +177,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
             }
         }
 
-        return KeyValues3ArrayValue.FromValue(
-            ValuePrimitive.FromString(string.Empty),
-            array: values.ToImmutableList()
-        );
+        return new KeyValues3ArrayValue(null, null, values.ToImmutableList());
     }
 
     private KeyValues3ArrayValue ParseAnonymousObject(Lexer lexer)
@@ -210,10 +204,7 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
             throw new UnexpectedTokenException(nextToken);
         }
 
-        return KeyValues3ArrayValue.FromValue(
-            ValuePrimitive.FromString(string.Empty),
-            children: pairs.ToImmutableList()
-        );
+        return new KeyValues3ArrayValue(null, pairs.ToImmutableList());
     }
 
     private KeyValues3Pair ParseObject(Lexer lexer, string key)
@@ -240,10 +231,6 @@ public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Documen
             throw new UnexpectedTokenException(nextToken);
         }
 
-        return new KeyValues3Pair(
-            key,
-            ValuePrimitive.FromString(string.Empty),
-            children: pairs.ToImmutableList()
-        );
+        return new KeyValues3Pair(key, new EngineString(string.Empty), pairs.ToImmutableList());
     }
 }
