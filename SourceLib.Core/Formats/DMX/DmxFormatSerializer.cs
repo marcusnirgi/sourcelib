@@ -5,10 +5,11 @@ using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.DMX;
 
-public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
+public sealed class DmxFormatSerializer : BinaryFormatSerializer<DmxDocument>
 {
-    public void Serialize(DmxDocument value, IBufferWriter<byte> output)
+    public override byte[] Serialize(DmxDocument value)
     {
+        var output = new ArrayBufferWriter<byte>();
         var header = value.Header;
         var encodingVersion = (DmxHeaderBinaryEncodingVersion)header.EncodingVersion;
 
@@ -31,22 +32,14 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
         foreach (var element in elements)
         {
             if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V2)
-            {
                 WriteStringIndex(output, stringIndices[element.ClassName], encodingVersion);
-            }
             else
-            {
                 WriteNullString(output, element.ClassName);
-            }
 
             if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V4)
-            {
                 WriteStringIndex(output, stringIndices[element.Name], encodingVersion);
-            }
             else
-            {
                 WriteNullString(output, element.Name);
-            }
 
             WriteBytes(output, element.Id.ToByteArray());
         }
@@ -60,58 +53,42 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
             foreach (var attribute in attributes)
             {
                 if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V2)
-                {
                     WriteStringIndex(output, stringIndices[attribute.Key], encodingVersion);
-                }
                 else
-                {
                     WriteNullString(output, attribute.Key);
-                }
 
                 switch (attribute.TypeIndex)
                 {
                     case DmxTypeIndex.ElementRef:
                     {
                         WriteByte(output, (byte)DmxTypeIndex.ElementRef);
-
                         WriteElementRef(
                             output,
                             attribute.Value,
                             attribute.ReferencedElement,
                             elementIndices
                         );
-
                         break;
                     }
 
                     case DmxTypeIndex.Int:
                     {
                         WriteByte(output, (byte)DmxTypeIndex.Int);
-
-                        var valueInt = (EngineInt)attribute.Value;
-
-                        WriteInt32(output, valueInt.Value);
+                        WriteInt32(output, ((EngineInt)attribute.Value).Value);
                         break;
                     }
 
                     case DmxTypeIndex.Float:
                     {
                         WriteByte(output, (byte)DmxTypeIndex.Float);
-
-                        var valueFloat = (EngineFloat)attribute.Value;
-
-                        WriteSingle(output, valueFloat.Value);
+                        WriteSingle(output, ((EngineFloat)attribute.Value).Value);
                         break;
                     }
 
                     case DmxTypeIndex.Bool:
                     {
                         WriteByte(output, (byte)DmxTypeIndex.Bool);
-
-                        var valueBool = (EngineBool)attribute.Value;
-
-                        WriteByte(output, valueBool.Value ? (byte)1 : (byte)0);
-
+                        WriteByte(output, ((EngineBool)attribute.Value).Value ? (byte)1 : (byte)0);
                         break;
                     }
 
@@ -119,16 +96,12 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
                     {
                         WriteByte(output, (byte)DmxTypeIndex.String);
 
-                        var valueString = ((EngineString)attribute.Value).Value;
+                        var stringValue = ((EngineString)attribute.Value).Value;
 
                         if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V4)
-                        {
-                            WriteStringIndex(output, stringIndices[valueString], encodingVersion);
-                        }
+                            WriteStringIndex(output, stringIndices[stringValue], encodingVersion);
                         else
-                        {
-                            WriteNullString(output, valueString);
-                        }
+                            WriteNullString(output, stringValue);
 
                         break;
                     }
@@ -137,10 +110,10 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
                     {
                         WriteByte(output, (byte)DmxTypeIndex.Binary);
 
-                        var valueBytes = ((EngineBytes)attribute.Value).Value.Span;
+                        var bytes = ((EngineBytes)attribute.Value).Value.Span;
 
-                        WriteInt32(output, valueBytes.Length);
-                        WriteBytes(output, valueBytes);
+                        WriteInt32(output, bytes.Length);
+                        WriteBytes(output, bytes);
 
                         break;
                     }
@@ -148,11 +121,10 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
                     case DmxTypeIndex.Time:
                     {
                         WriteByte(output, (byte)DmxTypeIndex.Time);
-
-                        var valueTime = (EngineTime)attribute.Value;
-
-                        WriteInt32(output, checked((int)(valueTime.Value.Seconds * 10000f)));
-
+                        WriteInt32(
+                            output,
+                            checked((int)(((EngineTime)attribute.Value).Value.Seconds * 10000f))
+                        );
                         break;
                     }
 
@@ -257,9 +229,7 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
                         WriteInt32(output, values.Count);
 
                         foreach (var valueGuid in values)
-                        {
                             WriteElementRef(output, valueGuid, null, elementIndices);
-                        }
 
                         break;
                     }
@@ -301,9 +271,7 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
                         WriteInt32(output, values.Count);
 
                         foreach (var item in values)
-                        {
                             WriteByte(output, item.Value ? (byte)1 : (byte)0);
-                        }
 
                         break;
                     }
@@ -493,6 +461,8 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
                 }
             }
         }
+
+        return output.WrittenMemory.ToArray();
     }
 
     private static List<string> BuildStringMap(
@@ -551,13 +521,9 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
             encodingVersion == DmxHeaderBinaryEncodingVersion.V2
             || encodingVersion == DmxHeaderBinaryEncodingVersion.V3
         )
-        {
             WriteInt16(output, checked((short)values.Count));
-        }
         else
-        {
             WriteInt32(output, values.Count);
-        }
 
         foreach (var value in values)
             WriteNullString(output, value);
@@ -612,7 +578,6 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
     private static void WriteNullString(IBufferWriter<byte> output, string value)
     {
         WriteBytes(output, Encoding.ASCII.GetBytes(value));
-
         WriteByte(output, 0);
     }
 
@@ -624,22 +589,22 @@ public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
 
     private static void WriteBytes(IBufferWriter<byte> output, ReadOnlySpan<byte> value)
     {
-        value.CopyTo(output.GetSpan(value.Length));
+        if (value.IsEmpty)
+            return;
 
+        value.CopyTo(output.GetSpan(value.Length));
         output.Advance(value.Length);
     }
 
     private static void WriteInt16(IBufferWriter<byte> output, short value)
     {
         BinaryPrimitives.WriteInt16LittleEndian(output.GetSpan(2), value);
-
         output.Advance(2);
     }
 
     private static void WriteInt32(IBufferWriter<byte> output, int value)
     {
         BinaryPrimitives.WriteInt32LittleEndian(output.GetSpan(4), value);
-
         output.Advance(4);
     }
 

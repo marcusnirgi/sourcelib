@@ -1,13 +1,11 @@
-using System.Buffers;
-
 namespace SourceLib.Core;
 
 public interface IBinaryFormatParser<T>
 {
-    T Parse(ReadOnlySpan<byte> input);
+    T Parse(byte[] input);
 }
 
 public interface IBinaryFormatSerializer<T>
 {
-    void Serialize(T value, IBufferWriter<byte> output);
+    byte[] Serialize(T value);
 }

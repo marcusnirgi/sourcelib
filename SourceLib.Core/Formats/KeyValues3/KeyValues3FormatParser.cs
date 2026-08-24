@@ -5,7 +5,7 @@ namespace SourceLib.Core.Formats.KeyValues3;
 
 public sealed class KeyValues3FormatParser : ITextFormatParser<KeyValues3Document>
 {
-    public KeyValues3Document Parse(ReadOnlySpan<char> input)
+    public KeyValues3Document Parse(string input)
     {
         var body = new List<KeyValues3Pair>();
         var lexer = new Lexer(input.ToString());

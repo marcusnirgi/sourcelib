@@ -1,4 +1,3 @@
-using System.Buffers;
 using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.DMX;
 using SourceLib.Tests.GameData;
@@ -20,15 +19,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_1_model_1.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
         var document = parser.Parse(fixtureContent);
 
         var rootElement = document.Elements.First(e =>
             e.ClassName == "DmElement" && e.Name == "root"
         );
+
         var colorThings = rootElement.Attributes.First(a => a.Key == "color_things");
         var colors = (EngineArray<EngineColor4>)colorThings.Value;
-        // check that it has my fav colour
+
         Assert.Contains(
             colors.Values,
             p => p.Value.Red == 106 && p.Value.Green == 0 && p.Value.Blue == 255
@@ -40,15 +41,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_2_model_1.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
         var document = parser.Parse(fixtureContent);
 
         var rootElement = document.Elements.First(e =>
             e.ClassName == "DmElement" && e.Name == "root"
         );
+
         var colorThings = rootElement.Attributes.First(a => a.Key == "color_things");
         var colors = (EngineArray<EngineColor4>)colorThings.Value;
-        // check that it has my fav colour
+
         Assert.Contains(
             colors.Values,
             p => p.Value.Red == 106 && p.Value.Green == 0 && p.Value.Blue == 255
@@ -60,15 +63,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_3_model_1.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
         var document = parser.Parse(fixtureContent);
 
         var rootElement = document.Elements.First(e =>
             e.ClassName == "DmElement" && e.Name == "root"
         );
+
         var colorThings = rootElement.Attributes.First(a => a.Key == "color_things");
         var colors = (EngineArray<EngineColor4>)colorThings.Value;
-        // check that it has my fav colour
+
         Assert.Contains(
             colors.Values,
             p => p.Value.Red == 106 && p.Value.Green == 0 && p.Value.Blue == 255
@@ -80,15 +85,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_4_model_1.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
         var document = parser.Parse(fixtureContent);
 
         var rootElement = document.Elements.First(e =>
             e.ClassName == "DmElement" && e.Name == "root"
         );
+
         var colorThings = rootElement.Attributes.First(a => a.Key == "color_things");
         var colors = (EngineArray<EngineColor4>)colorThings.Value;
-        // check that it has my fav colour
+
         Assert.Contains(
             colors.Values,
             p => p.Value.Red == 106 && p.Value.Green == 0 && p.Value.Blue == 255
@@ -100,15 +107,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_5_model_1.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
         var document = parser.Parse(fixtureContent);
 
         var rootElement = document.Elements.First(e =>
             e.ClassName == "DmElement" && e.Name == "root"
         );
+
         var colorThings = rootElement.Attributes.First(a => a.Key == "color_things");
         var colors = (EngineArray<EngineColor4>)colorThings.Value;
-        // check that it has my fav colour
+
         Assert.Contains(
             colors.Values,
             p => p.Value.Red == 106 && p.Value.Green == 0 && p.Value.Blue == 255
@@ -120,15 +129,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_5_model_18.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
         var document = parser.Parse(fixtureContent);
 
         var rootElement = document.Elements.First(e =>
             e.ClassName == "DmElement" && e.Name == "root"
         );
+
         var colorThings = rootElement.Attributes.First(a => a.Key == "color_things");
         var colors = (EngineArray<EngineColor4>)colorThings.Value;
-        // check that it has my fav colour
+
         Assert.Contains(
             colors.Values,
             p => p.Value.Red == 106 && p.Value.Green == 0 && p.Value.Blue == 255
@@ -140,20 +151,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_1_model_1.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
-        var originalDocument = parser.Parse(fixtureContent);
-
-        var buffer = new ArrayBufferWriter<byte>();
         var serializer = new DmxFormatSerializer();
-        serializer.Serialize(originalDocument, buffer);
 
-        var serializedBytes = buffer.WrittenSpan;
-        Assert.True(
-            fixtureContent.AsSpan().SequenceEqual(serializedBytes),
-            $"Serialized DMX differs from fixture."
-        );
+        var originalDocument = parser.Parse(fixtureContent);
+        var serializedBytes = serializer.Serialize(originalDocument);
 
-        var reparsedDocument = parser.Parse(buffer.WrittenSpan.ToArray());
+        Assert.Equal(fixtureContent, serializedBytes);
+
+        var reparsedDocument = parser.Parse(serializedBytes);
+
         Assert.Equivalent(originalDocument, reparsedDocument);
     }
 
@@ -162,20 +170,17 @@ public class DmxFormatTests
     {
         var fixturePath = TestFixtures.GetPath("dmx", "binary_5_model_18.dmx");
         var fixtureContent = File.ReadAllBytes(fixturePath);
+
         var parser = new DmxFormatParser();
-        var originalDocument = parser.Parse(fixtureContent);
-
-        var buffer = new ArrayBufferWriter<byte>();
         var serializer = new DmxFormatSerializer();
-        serializer.Serialize(originalDocument, buffer);
 
-        var serializedBytes = buffer.WrittenSpan;
-        Assert.True(
-            fixtureContent.AsSpan().SequenceEqual(serializedBytes),
-            $"Serialized DMX differs from fixture."
-        );
+        var originalDocument = parser.Parse(fixtureContent);
+        var serializedBytes = serializer.Serialize(originalDocument);
 
-        var reparsedDocument = parser.Parse(buffer.WrittenSpan.ToArray());
+        Assert.Equal(fixtureContent, serializedBytes);
+
+        var reparsedDocument = parser.Parse(serializedBytes);
+
         Assert.Equivalent(originalDocument, reparsedDocument);
     }
 }

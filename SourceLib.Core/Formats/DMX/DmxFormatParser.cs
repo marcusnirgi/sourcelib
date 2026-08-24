@@ -4,7 +4,7 @@ namespace SourceLib.Core.Formats.DMX;
 
 public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
 {
-    public DmxDocument Parse(ReadOnlySpan<byte> input)
+    public DmxDocument Parse(byte[] input)
     {
         var elements = new List<DmxElement>();
 

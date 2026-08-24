@@ -3,24 +3,12 @@ using System.Text;
 
 namespace SourceLib.Core.Formats.VPK;
 
-public sealed class VPKFormatSerializer : IBinaryFormatSerializer<VPK>
+public sealed class VPKFormatSerializer : BinaryFormatSerializer<VPK>
 {
-    public void Serialize(VPK value, IBufferWriter<byte> output)
+    public override byte[] Serialize(VPK value)
     {
-        if (value.Header is not null)
-        {
-            WriteUInt32(output, VPKHeader.SIGNATURE);
-            WriteUInt32(output, (uint)value.Header.Version);
-            WriteUInt32(output, value.Header.TreeSize);
-
-            if (value.Header.Version == VPKVersion.v2)
-            {
-                WriteUInt32(output, value.Header.FileDataSectionSize ?? 0);
-                WriteUInt32(output, value.Header.ArchiveMD5SectionSize ?? 0);
-                WriteUInt32(output, value.Header.OtherMD5SectionSize ?? 0);
-                WriteUInt32(output, value.Header.SignatureSectionSize ?? 0);
-            }
-        }
+        var writer = new ArrayBufferWriter<byte>();
+        var tree = new ArrayBufferWriter<byte>();
 
         var extensions = value
             .Files.GroupBy(GetExtension)
@@ -28,7 +16,7 @@ public sealed class VPKFormatSerializer : IBinaryFormatSerializer<VPK>
 
         foreach (var extensionGroup in extensions)
         {
-            WriteString(output, extensionGroup.Key);
+            WriteString(tree, extensionGroup.Key);
 
             var directories = extensionGroup
                 .GroupBy(GetDirectory)
@@ -37,33 +25,65 @@ public sealed class VPKFormatSerializer : IBinaryFormatSerializer<VPK>
 
             foreach (var directoryGroup in directories)
             {
-                WriteString(output, directoryGroup.Key);
+                WriteString(tree, directoryGroup.Key);
 
                 foreach (var file in directoryGroup.OrderBy(GetFileName, StringComparer.Ordinal))
                 {
-                    WriteString(output, GetFileName(file));
+                    WriteString(tree, GetFileName(file));
 
-                    WriteUInt32(output, file.Crc);
-                    WriteUInt16(output, file.PreloadSize);
+                    WriteUInt32(tree, file.Crc);
+                    WriteUInt16(tree, file.PreloadSize);
 
                     foreach (var part in file.Parts)
                     {
-                        WriteUInt16(output, part.FileNumber);
-                        WriteUInt32(output, part.Offset);
-                        WriteUInt32(output, part.Size);
+                        WriteUInt16(tree, part.FileNumber);
+                        WriteUInt32(tree, part.Offset);
+                        WriteUInt32(tree, part.Size);
                     }
 
-                    WriteUInt16(output, 0xFFFF);
-                    WriteBytes(output, file.PreloadData);
+                    WriteUInt16(tree, 0xFFFF);
+                    WriteBytes(tree, file.PreloadData);
                 }
 
-                WriteByte(output, 0);
+                WriteByte(tree, 0);
             }
 
-            WriteByte(output, 0);
+            WriteByte(tree, 0);
         }
 
-        WriteByte(output, 0);
+        WriteByte(tree, 0);
+
+        if (value.Header is null)
+        {
+            return tree.WrittenMemory.ToArray();
+        }
+
+        var header = value.Header;
+        var treeSize = checked((uint)tree.WrittenCount);
+
+        WriteUInt32(writer, VPKHeader.SIGNATURE);
+        WriteUInt32(writer, (uint)header.Version);
+        WriteUInt32(writer, treeSize);
+
+        if (header.Version == VPKVersion.v2)
+        {
+            WriteUInt32(writer, checked((uint)header.FileDataSection.Length));
+            WriteUInt32(writer, checked((uint)header.ArchiveMD5Section.Length));
+            WriteUInt32(writer, checked((uint)header.OtherMD5Section.Length));
+            WriteUInt32(writer, checked((uint)header.SignatureSection.Length));
+        }
+
+        WriteBytes(writer, tree.WrittenSpan);
+
+        if (header.Version == VPKVersion.v2)
+        {
+            WriteBytes(writer, header.FileDataSection);
+            WriteBytes(writer, header.ArchiveMD5Section);
+            WriteBytes(writer, header.OtherMD5Section);
+            WriteBytes(writer, header.SignatureSection);
+        }
+
+        return writer.WrittenMemory.ToArray();
     }
 
     private static string GetExtension(VPKFile file)
@@ -141,6 +161,19 @@ public sealed class VPKFormatSerializer : IBinaryFormatSerializer<VPK>
         span[3] = (byte)(value >> 24);
 
         output.Advance(4);
+    }
+
+    private static void WriteBytes(IBufferWriter<byte> output, ReadOnlySpan<byte> bytes)
+    {
+        if (bytes.IsEmpty)
+        {
+            return;
+        }
+
+        var span = output.GetSpan(bytes.Length);
+        bytes.CopyTo(span);
+
+        output.Advance(bytes.Length);
     }
 
     private static void WriteBytes(IBufferWriter<byte> output, IEnumerable<byte> bytes)

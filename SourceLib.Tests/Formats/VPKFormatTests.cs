@@ -1,4 +1,3 @@
-using System.Buffers;
 using SourceLib.Core.Formats.VPK;
 using SourceLib.Tests.GameData;
 
@@ -18,21 +17,19 @@ public class VPKFormatTests
     public void Test_Roundtrips_V0()
     {
         var directoryPath = TestFixtures.GetPath("vpk", "v0", "sourcelib-vpk_dir.vpk");
-
         var chunkPath = TestFixtures.GetPath("vpk", "v0", "sourcelib-vpk_000.vpk");
 
-        var directory = File.ReadAllBytes(directoryPath);
-        var chunk = new MemoryStream();
-        chunk.Write(File.ReadAllBytes(chunkPath));
-        chunk.Position = 0;
-
         var parser = new VPKFormatParser();
+        var serializer = new VPKFormatSerializer();
+
+        var directory = File.ReadAllBytes(directoryPath);
+        var chunk = CreateChunk(File.ReadAllBytes(chunkPath));
+
         var vpk = parser.Parse(directory, [chunk]);
 
         Assert.Equal(4, vpk.Files.Count);
 
         var folderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
-
         var otherFolderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
 
         Assert.Equal(folderizedFile.Crc, otherFolderizedFile.Crc);
@@ -49,21 +46,9 @@ public class VPKFormatTests
             writer.WriteLine("42");
         }
 
-        var directoryWriter = new ArrayBufferWriter<byte>();
-        var serializer = new VPKFormatSerializer();
+        var serializedDirectory = serializer.Serialize(vpk);
 
-        serializer.Serialize(vpk, directoryWriter);
-
-        var serializedDirectory = directoryWriter.WrittenSpan.ToArray();
-
-        chunk.Position = 0;
-
-        var serializedChunk = new byte[chunk.Length];
-        chunk.ReadExactly(serializedChunk);
-
-        var reparsedChunk = new MemoryStream(serializedChunk);
-
-        var reparsed = parser.Parse(serializedDirectory, [reparsedChunk]);
+        var reparsed = parser.Parse(serializedDirectory, [CreateChunk(chunk.ToArray())]);
 
         Assert.Equal(4, reparsed.Files.Count);
 
@@ -80,21 +65,19 @@ public class VPKFormatTests
     public void Test_Roundtrips_V1()
     {
         var directoryPath = TestFixtures.GetPath("vpk", "v1", "sourcelib-vpk_dir.vpk");
-
         var chunkPath = TestFixtures.GetPath("vpk", "v1", "sourcelib-vpk_000.vpk");
 
-        var directory = File.ReadAllBytes(directoryPath);
-        var chunk = new MemoryStream();
-        chunk.Write(File.ReadAllBytes(chunkPath));
-        chunk.Position = 0;
-
         var parser = new VPKFormatParser();
+        var serializer = new VPKFormatSerializer();
+
+        var directory = File.ReadAllBytes(directoryPath);
+        var chunk = CreateChunk(File.ReadAllBytes(chunkPath));
+
         var vpk = parser.Parse(directory, [chunk]);
 
         Assert.Equal(4, vpk.Files.Count);
 
         var folderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
-
         var otherFolderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
 
         Assert.Equal(folderizedFile.Crc, otherFolderizedFile.Crc);
@@ -111,21 +94,9 @@ public class VPKFormatTests
             writer.WriteLine("42");
         }
 
-        var directoryWriter = new ArrayBufferWriter<byte>();
-        var serializer = new VPKFormatSerializer();
+        var serializedDirectory = serializer.Serialize(vpk);
 
-        serializer.Serialize(vpk, directoryWriter);
-
-        var serializedDirectory = directoryWriter.WrittenSpan.ToArray();
-
-        chunk.Position = 0;
-
-        var serializedChunk = new byte[chunk.Length];
-        chunk.ReadExactly(serializedChunk);
-
-        var reparsedChunk = new MemoryStream(serializedChunk);
-
-        var reparsed = parser.Parse(serializedDirectory, [reparsedChunk]);
+        var reparsed = parser.Parse(serializedDirectory, [CreateChunk(chunk.ToArray())]);
 
         Assert.Equal(4, reparsed.Files.Count);
 
@@ -142,21 +113,19 @@ public class VPKFormatTests
     public void Test_Roundtrips_V2()
     {
         var directoryPath = TestFixtures.GetPath("vpk", "v2", "sourcelib-vpk_dir.vpk");
-
         var chunkPath = TestFixtures.GetPath("vpk", "v2", "sourcelib-vpk_000.vpk");
 
-        var directory = File.ReadAllBytes(directoryPath);
-        var chunk = new MemoryStream();
-        chunk.Write(File.ReadAllBytes(chunkPath));
-        chunk.Position = 0;
-
         var parser = new VPKFormatParser();
+        var serializer = new VPKFormatSerializer();
+
+        var directory = File.ReadAllBytes(directoryPath);
+        var chunk = CreateChunk(File.ReadAllBytes(chunkPath));
+
         var vpk = parser.Parse(directory, [chunk]);
 
         Assert.Equal(4, vpk.Files.Count);
 
         var folderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
-
         var otherFolderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
 
         Assert.Equal(folderizedFile.Crc, otherFolderizedFile.Crc);
@@ -173,21 +142,9 @@ public class VPKFormatTests
             writer.WriteLine("42");
         }
 
-        var directoryWriter = new ArrayBufferWriter<byte>();
-        var serializer = new VPKFormatSerializer();
+        var serializedDirectory = serializer.Serialize(vpk);
 
-        serializer.Serialize(vpk, directoryWriter);
-
-        var serializedDirectory = directoryWriter.WrittenSpan.ToArray();
-
-        chunk.Position = 0;
-
-        var serializedChunk = new byte[chunk.Length];
-        chunk.ReadExactly(serializedChunk);
-
-        var reparsedChunk = new MemoryStream(serializedChunk);
-
-        var reparsed = parser.Parse(serializedDirectory, [reparsedChunk]);
+        var reparsed = parser.Parse(serializedDirectory, [CreateChunk(chunk.ToArray())]);
 
         Assert.Equal(4, reparsed.Files.Count);
 
@@ -198,5 +155,58 @@ public class VPKFormatTests
         using var modifiedReader = new StreamReader(modifiedFile.Open(reparsed.Chunks));
 
         Assert.Equal("42", modifiedReader.ReadLine());
+    }
+
+    [Fact]
+    public void Test_Roundtrips_HL2_Textures_V2()
+    {
+        var hl2 = _games.Get(GameId.HalfLife2);
+
+        var directoryPath = hl2.GetPath("hl2", "hl2_misc_dir.vpk");
+
+        var directory = File.ReadAllBytes(directoryPath);
+
+        var chunkPaths = new[]
+        {
+            hl2.GetPath("hl2", "hl2_misc_000.vpk"),
+            hl2.GetPath("hl2", "hl2_misc_001.vpk"),
+            hl2.GetPath("hl2", "hl2_misc_002.vpk"),
+            hl2.GetPath("hl2", "hl2_misc_003.vpk"),
+        };
+
+        var chunks = chunkPaths
+            .Select(path => CreateChunk(File.ReadAllBytes(path)))
+            .Cast<Stream>()
+            .ToList();
+
+        var parser = new VPKFormatParser();
+        var serializer = new VPKFormatSerializer();
+
+        var vpk = parser.Parse(directory, chunks);
+
+        Assert.Equal(4, vpk.Chunks.Count);
+        Assert.NotNull(vpk.Header);
+        Assert.Equal(VPKVersion.v2, vpk.Header.Version);
+
+        Assert.NotEmpty(vpk.Header.ArchiveMD5Section);
+        Assert.NotEmpty(vpk.Header.OtherMD5Section);
+        Assert.NotEmpty(vpk.Header.SignatureSection);
+
+        var serializedDirectory = serializer.Serialize(vpk);
+        var reparsed = parser.Parse(serializedDirectory, chunks);
+
+        Assert.Equal(vpk.Files.Count, reparsed.Files.Count);
+        Assert.Equal(vpk.Header.Version, reparsed.Header!.Version);
+        Assert.Equal(vpk.Header.ArchiveMD5Section, reparsed.Header.ArchiveMD5Section);
+        Assert.Equal(vpk.Header.OtherMD5Section, reparsed.Header.OtherMD5Section);
+        Assert.Equal(vpk.Header.SignatureSection, reparsed.Header.SignatureSection);
+    }
+
+    private static MemoryStream CreateChunk(byte[] data)
+    {
+        var stream = new MemoryStream();
+        stream.Write(data);
+        stream.Position = 0;
+        return stream;
     }
 }

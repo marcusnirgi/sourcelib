@@ -14,17 +14,15 @@ public sealed class VPKFile
 
     public VPKStream Open(IList<Stream> chunks)
     {
-        var stream = OpenContents(chunks);
-
-        return new VPKStream(stream, this, chunks, writable: false);
+        return OpenInternal(chunks, writable: false);
     }
 
     public VPKStream OpenWrite(IList<Stream> chunks)
     {
-        return new VPKStream(new MemoryStream(), this, chunks, writable: true);
+        return OpenInternal(chunks, writable: true);
     }
 
-    private MemoryStream OpenContents(IList<Stream> chunks)
+    private VPKStream OpenInternal(IList<Stream> chunks, bool writable)
     {
         var stream = new MemoryStream();
 
@@ -41,17 +39,31 @@ public sealed class VPKFile
 
             var chunk = chunks[part.FileNumber];
 
-            chunk.Position = part.Offset;
+            if (!chunk.CanSeek)
+            {
+                throw new InvalidDataException($"VPK chunk {part.FileNumber} is not seekable.");
+            }
 
-            var buffer = new byte[part.Size];
-            chunk.ReadExactly(buffer);
+            var position = chunk.Position;
 
-            stream.Write(buffer);
+            try
+            {
+                chunk.Position = part.Offset;
+
+                var buffer = new byte[part.Size];
+                chunk.ReadExactly(buffer);
+
+                stream.Write(buffer);
+            }
+            finally
+            {
+                chunk.Position = position;
+            }
         }
 
         stream.Position = 0;
 
-        return stream;
+        return new VPKStream(stream, this, chunks, writable);
     }
 }
 

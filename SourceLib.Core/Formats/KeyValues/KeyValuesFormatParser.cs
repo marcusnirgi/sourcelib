@@ -5,7 +5,7 @@ namespace SourceLib.Core.Formats.KeyValues;
 
 public sealed class KeyValuesFormatParser : ITextFormatParser<KeyValuesDocument>
 {
-    public KeyValuesDocument Parse(ReadOnlySpan<char> input)
+    public KeyValuesDocument Parse(string input)
     {
         var body = new List<KeyValuesPair>();
         var macros = new List<string>();

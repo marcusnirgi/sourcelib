@@ -2,7 +2,7 @@ namespace SourceLib.Core;
 
 public interface ITextFormatParser<T>
 {
-    T Parse(ReadOnlySpan<char> input);
+    T Parse(string input);
 }
 
 public interface ITextFormatSerializer<T>

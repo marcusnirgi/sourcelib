@@ -4,7 +4,7 @@ namespace SourceLib.Core.Formats.KeyValues2;
 
 public sealed class KeyValues2FormatParser : ITextFormatParser<KeyValues2Document>
 {
-    public KeyValues2Document Parse(ReadOnlySpan<char> input)
+    public KeyValues2Document Parse(string input)
     {
         var body = new List<KeyValues2Pair>();
         var lexer = new Lexer(input.ToString());
