@@ -202,6 +202,40 @@ public class VPKFormatTests
         Assert.Equal(vpk.Header.SignatureSection, reparsed.Header.SignatureSection);
     }
 
+    [Fact]
+    public void Test_Roundtrips_Portal2_Textures_V1()
+    {
+        var portal = _games.Get(GameId.Portal2);
+
+        var directoryPath = portal.GetPath("portal2", "pak01_dir.vpk");
+        var directory = File.ReadAllBytes(directoryPath);
+
+        var chunkPaths = Enumerable
+            .Range(0, 176)
+            .Select(i => portal.GetPath("portal2", $"pak01_{i:000}.vpk"))
+            .ToArray();
+
+        var chunks = chunkPaths
+            .Select(path => CreateChunk(File.ReadAllBytes(path)))
+            .Cast<Stream>()
+            .ToList();
+
+        var parser = new VPKFormatParser();
+        var serializer = new VPKFormatSerializer();
+
+        var vpk = parser.Parse(directory, chunks);
+
+        Assert.Equal(176, vpk.Chunks.Count);
+        Assert.NotNull(vpk.Header);
+        Assert.Equal(VPKVersion.v1, vpk.Header.Version);
+
+        var serializedDirectory = serializer.Serialize(vpk);
+        var reparsed = parser.Parse(serializedDirectory, chunks);
+
+        Assert.Equal(vpk.Files.Count, reparsed.Files.Count);
+        Assert.Equal(vpk.Header.Version, reparsed.Header!.Version);
+    }
+
     private static MemoryStream CreateChunk(byte[] data)
     {
         var stream = new MemoryStream();
