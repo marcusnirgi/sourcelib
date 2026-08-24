@@ -3,10 +3,25 @@ using System.Text;
 
 namespace SourceLib.Core.Formats.VPK;
 
-public sealed class VPKFormatSerializer
+public sealed class VPKFormatSerializer : IBinaryFormatSerializer<VPK>
 {
     public void Serialize(VPK value, IBufferWriter<byte> output)
     {
+        if (value.Header is not null)
+        {
+            WriteUInt32(output, VPKHeader.SIGNATURE);
+            WriteUInt32(output, (uint)value.Header.Version);
+            WriteUInt32(output, value.Header.TreeSize);
+
+            if (value.Header.Version == VPKVersion.v2)
+            {
+                WriteUInt32(output, value.Header.FileDataSectionSize ?? 0);
+                WriteUInt32(output, value.Header.ArchiveMD5SectionSize ?? 0);
+                WriteUInt32(output, value.Header.OtherMD5SectionSize ?? 0);
+                WriteUInt32(output, value.Header.SignatureSectionSize ?? 0);
+            }
+        }
+
         var extensions = value
             .Files.GroupBy(GetExtension)
             .OrderBy(group => group.Key, StringComparer.Ordinal);

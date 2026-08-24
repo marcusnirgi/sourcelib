@@ -7,6 +7,43 @@ public sealed class VPKFormatParser
         using var stream = new MemoryStream(directory.ToArray());
         using var reader = new BinaryReader(stream);
 
+        VPKHeader? header = null;
+        var signature = reader.ReadUInt32();
+        if (signature == VPKHeader.SIGNATURE)
+        {
+            var version = (VPKVersion)reader.ReadUInt32();
+            var treeSize = reader.ReadUInt32();
+            uint? fileDataSectionSize = null;
+            uint? archiveMD5SectionSize = null;
+            uint? otherMD5SectionSize = null;
+            uint? signatureSectionSize = null;
+            if (version == VPKVersion.v2)
+            {
+                fileDataSectionSize = reader.ReadUInt32();
+                archiveMD5SectionSize = reader.ReadUInt32();
+                otherMD5SectionSize = reader.ReadUInt32();
+                signatureSectionSize = reader.ReadUInt32();
+            }
+            else if (version != VPKVersion.v1)
+            {
+                throw new InvalidDataException($"Unknown header version {version}");
+            }
+
+            header = new VPKHeader()
+            {
+                Version = version,
+                TreeSize = treeSize,
+                FileDataSectionSize = fileDataSectionSize,
+                ArchiveMD5SectionSize = archiveMD5SectionSize,
+                OtherMD5SectionSize = otherMD5SectionSize,
+                SignatureSectionSize = signatureSectionSize,
+            };
+        }
+        else
+        {
+            reader.BaseStream.Position = 0;
+        }
+
         var files = new List<VPKFile>();
 
         while (true)
@@ -75,6 +112,11 @@ public sealed class VPKFormatParser
             }
         }
 
-        return new VPK { Files = files, Chunks = chunks.ToList() };
+        return new VPK
+        {
+            Header = header,
+            Files = files,
+            Chunks = chunks.ToList(),
+        };
     }
 }

@@ -2,6 +2,7 @@ namespace SourceLib.Core.Formats.VPK;
 
 public sealed class VPK
 {
+    public VPKHeader? Header { get; init; }
     public IList<VPKFile> Files { get; init; } = [];
     public IList<Stream> Chunks { get; init; } = [];
 
