@@ -59,7 +59,9 @@ public sealed class VPKFormatParser : IBinaryFormatParser<VPK>
 
                     var metadata = reader.ReadBytes(metaDataSize);
 
-                    var path = $"{directoryName}/{fileName}.{extensionName}";
+                    var path = string.IsNullOrWhiteSpace(directoryName)
+                        ? $"{fileName}.{extensionName}"
+                        : $"{directoryName}/{fileName}.{extensionName}";
 
                     var file = new VPKFile
                     {
