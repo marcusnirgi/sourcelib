@@ -3,7 +3,7 @@ using System.Buffers.Binary;
 using System.Text;
 using SourceLib.Core.Engine;
 
-namespace SourceLib.Core.Formats.Dmx;
+namespace SourceLib.Core.Formats.DMX;
 
 public sealed class DmxFormatSerializer : IBinaryFormatSerializer<DmxDocument>
 {

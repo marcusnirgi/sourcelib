@@ -1,6 +1,6 @@
 using SourceLib.Core.Engine;
 
-namespace SourceLib.Core.Formats.Dmx;
+namespace SourceLib.Core.Formats.DMX;
 
 public sealed class DmxAttribute
 {

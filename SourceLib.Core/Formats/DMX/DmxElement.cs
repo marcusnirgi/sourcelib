@@ -1,4 +1,4 @@
-namespace SourceLib.Core.Formats.Dmx;
+namespace SourceLib.Core.Formats.DMX;
 
 public sealed class DmxElement
 {

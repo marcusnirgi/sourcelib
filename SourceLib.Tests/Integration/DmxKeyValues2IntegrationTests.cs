@@ -1,4 +1,4 @@
-using SourceLib.Core.Formats.Dmx;
+using SourceLib.Core.Formats.DMX;
 using SourceLib.Core.Formats.KeyValues2;
 using SourceLib.Tests.GameData;
 

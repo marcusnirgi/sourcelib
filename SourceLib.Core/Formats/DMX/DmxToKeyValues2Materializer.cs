@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using SourceLib.Core.Engine;
 using SourceLib.Core.Formats.KeyValues2;
 
-namespace SourceLib.Core.Formats.Dmx;
+namespace SourceLib.Core.Formats.DMX;
 
 public sealed class DmxToKeyValues2Materializer
 {

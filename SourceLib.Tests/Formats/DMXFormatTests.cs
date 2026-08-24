@@ -1,6 +1,6 @@
 using System.Buffers;
 using SourceLib.Core.Engine;
-using SourceLib.Core.Formats.Dmx;
+using SourceLib.Core.Formats.DMX;
 using SourceLib.Tests.GameData;
 
 namespace SourceLib.Tests.Formats;
