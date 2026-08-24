@@ -48,10 +48,8 @@ public class KeyValues3FormatTests
             "<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->",
             document.Header
         );
-        var writer = new StringWriter();
         var serializer = new KeyValues3FormatSerializer();
-        serializer.Serialize(document, writer);
-        var serialized = writer.ToString();
+        var serialized = serializer.SerializeToString(document);
         var reparsedDocument = parser.Parse(serialized);
         Assert.Equivalent(document, reparsedDocument);
     }
@@ -63,10 +61,8 @@ public class KeyValues3FormatTests
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues3FormatParser();
         var document = parser.Parse(fixtureContent);
-        var writer = new StringWriter();
         var serializer = new KeyValues3FormatSerializer();
-        serializer.Serialize(document, writer);
-        var serialized = writer.ToString();
+        var serialized = serializer.SerializeToString(document);
         var reparsedDocument = parser.Parse(serialized);
         Assert.Equivalent(document, reparsedDocument);
     }

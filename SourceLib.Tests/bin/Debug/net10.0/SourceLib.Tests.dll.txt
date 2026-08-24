@@ -1,7 +1,0 @@
-SourceLib.Tests.LexerTests.Test_Json_WithComments
-SourceLib.Tests.LexerTests.Test_KV1_Macros_And_UnquotedStrings
-SourceLib.Tests.LexerTests.Test_KV2_Headers
-SourceLib.Tests.LexerTests.Test_KV3_MultilineStrings_And_Equals
-SourceLib.Core.Formats.KeyValues1FormatTests.Test_Parses_VDF_With_Macro_And_Comments
-SourceLib.Core.Formats.KeyValues1FormatTests.Test_Parses_ClientScheme_With_Tags
-SourceLib.Core.Formats.KeyValues1FormatTests.Test_Roundtrips_VDF_With_Macro

@@ -71,10 +71,7 @@ public class KeyValues1FormatTests
         var originalDocument = parser.Parse(fixtureContent);
         var serializer = new KeyValues1FormatSerializer();
 
-        using var writer = new StringWriter();
-        serializer.Serialize(originalDocument, writer);
-
-        var reparsedDocument = parser.Parse(writer.ToString());
+        var reparsedDocument = parser.Parse(serializer.SerializeToString(originalDocument));
 
         Assert.Equivalent(originalDocument, reparsedDocument);
     }
@@ -89,10 +86,7 @@ public class KeyValues1FormatTests
         var originalDocument = parser.Parse(File.ReadAllText(path));
         var serializer = new KeyValues1FormatSerializer();
 
-        using var writer = new StringWriter();
-        serializer.Serialize(originalDocument, writer);
-
-        var reparsedDocument = parser.Parse(writer.ToString());
+        var reparsedDocument = parser.Parse(serializer.SerializeToString(originalDocument));
 
         Assert.Equivalent(originalDocument, reparsedDocument);
     }

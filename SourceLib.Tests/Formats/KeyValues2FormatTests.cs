@@ -49,10 +49,8 @@ public class KeyValues2FormatTests
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues2FormatParser();
         var document = parser.Parse(fixtureContent);
-        var writer = new StringWriter();
         var serializer = new KeyValues2FormatSerializer();
-        serializer.Serialize(document, writer);
-        var serialized = writer.ToString();
+        var serialized = serializer.SerializeToString(document);
         var reparsedDocument = parser.Parse(serialized);
         Assert.Equivalent(document, reparsedDocument);
     }
@@ -64,10 +62,8 @@ public class KeyValues2FormatTests
         var fixtureContent = File.ReadAllText(fixturePath);
         var parser = new KeyValues2FormatParser();
         var document = parser.Parse(fixtureContent);
-        var writer = new StringWriter();
         var serializer = new KeyValues2FormatSerializer();
-        serializer.Serialize(document, writer);
-        var serialized = writer.ToString();
+        var serialized = serializer.SerializeToString(document);
         var reparsedDocument = parser.Parse(serialized);
         Assert.Equivalent(document, reparsedDocument);
     }

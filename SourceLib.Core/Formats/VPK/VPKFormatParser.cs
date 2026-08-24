@@ -1,12 +1,10 @@
-using System.Collections.Immutable;
-
 namespace SourceLib.Core.Formats.VPK;
 
-public sealed class VPKFormatParser : IBinaryFormatParser<VPK>
+public sealed class VPKFormatParser
 {
-    public VPK Parse(ReadOnlySpan<byte> input)
+    public VPK Parse(ReadOnlySpan<byte> directory, IReadOnlyList<Stream> chunks)
     {
-        using var stream = new MemoryStream(input.ToArray());
+        using var stream = new MemoryStream(directory.ToArray());
         using var reader = new BinaryReader(stream);
 
         var files = new List<VPKFile>();
@@ -63,19 +61,20 @@ public sealed class VPKFormatParser : IBinaryFormatParser<VPK>
                         ? $"{fileName}.{extensionName}"
                         : $"{directoryName}/{fileName}.{extensionName}";
 
-                    var file = new VPKFile
-                    {
-                        Path = path,
-                        Crc = crc,
-                        PreloadSize = metaDataSize,
-                        PreloadData = metadata,
-                        Parts = parts.ToImmutableList(),
-                    };
-                    files.Add(file);
+                    files.Add(
+                        new VPKFile
+                        {
+                            Path = path,
+                            Crc = crc,
+                            PreloadSize = metaDataSize,
+                            PreloadData = metadata.ToList(),
+                            Parts = parts,
+                        }
+                    );
                 }
             }
         }
 
-        return new VPK() { Files = files.ToImmutableList() };
+        return new VPK { Files = files, Chunks = chunks.ToList() };
     }
 }

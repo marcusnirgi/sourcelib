@@ -2,9 +2,9 @@ using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues3;
 
-public sealed class KeyValues3FormatSerializer : ITextFormatSerializer<KeyValues3Document>
+public sealed class KeyValues3FormatSerializer : TextFormatSerializer<KeyValues3Document>
 {
-    public void Serialize(KeyValues3Document value, TextWriter writer)
+    public override void Serialize(KeyValues3Document value, TextWriter writer)
     {
         if (!string.IsNullOrEmpty(value.Header))
             writer.WriteLine(value.Header);

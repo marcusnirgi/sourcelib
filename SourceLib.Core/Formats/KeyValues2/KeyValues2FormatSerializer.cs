@@ -3,9 +3,9 @@ using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues2;
 
-public sealed class KeyValues2FormatSerializer : ITextFormatSerializer<KeyValues2Document>
+public sealed class KeyValues2FormatSerializer : TextFormatSerializer<KeyValues2Document>
 {
-    public void Serialize(KeyValues2Document value, TextWriter writer)
+    public override void Serialize(KeyValues2Document value, TextWriter writer)
     {
         if (value.Header is not null)
             writer.WriteLine(value.Header);

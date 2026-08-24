@@ -2,9 +2,9 @@ using SourceLib.Core.Engine;
 
 namespace SourceLib.Core.Formats.KeyValues;
 
-public sealed class KeyValues1FormatSerializer : ITextFormatSerializer<KeyValuesDocument>
+public sealed class KeyValues1FormatSerializer : TextFormatSerializer<KeyValuesDocument>
 {
-    public void Serialize(KeyValuesDocument document, TextWriter writer)
+    public override void Serialize(KeyValuesDocument document, TextWriter writer)
     {
         foreach (var macro in document.Macros)
         {

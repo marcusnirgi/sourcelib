@@ -1,12 +1,13 @@
 /home/marcus/Projects/sourcelib/SourceLib.Core/bin/Debug/net10.0/SourceLib.Core.deps.json
 /home/marcus/Projects/sourcelib/SourceLib.Core/bin/Debug/net10.0/SourceLib.Core.dll
 /home/marcus/Projects/sourcelib/SourceLib.Core/bin/Debug/net10.0/SourceLib.Core.pdb
+/home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.csproj.AssemblyReference.cache
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.GeneratedMSBuildEditorConfig.editorconfig
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.AssemblyInfoInputs.cache
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.AssemblyInfo.cs
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.csproj.CoreCompileInputs.cache
+/home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.sourcelink.json
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.dll
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/refint/SourceLib.Core.dll
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.pdb
 /home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/ref/SourceLib.Core.dll
-/home/marcus/Projects/sourcelib/SourceLib.Core/obj/Debug/net10.0/SourceLib.Core.sourcelink.json
