@@ -1,4 +1,5 @@
 using System.Text.Json;
+using SourceLib.Core.Formats.VPK;
 using SourceLib.Tests.GameData;
 
 internal sealed class GameDataProvider : IGameDataProvider

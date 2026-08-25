@@ -177,28 +177,18 @@ public class VPKFormatTests
     public void Test_Reads_HL2_ValveRC()
     {
         var hl2 = _games.Get(GameId.HalfLife2);
+        var hl2MiscVpk = hl2.GetVPK(
+            new VPKFormatParser(),
+            ["hl2", "hl2_misc_dir.vpk"],
+            [
+                hl2.GetPath("hl2", "hl2_misc_000.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_001.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_002.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_003.vpk"),
+            ]
+        );
 
-        var directoryPath = hl2.GetPath("hl2", "hl2_misc_dir.vpk");
-        var directory = File.ReadAllBytes(directoryPath);
-
-        var chunkPaths = new[]
-        {
-            hl2.GetPath("hl2", "hl2_misc_000.vpk"),
-            hl2.GetPath("hl2", "hl2_misc_001.vpk"),
-            hl2.GetPath("hl2", "hl2_misc_002.vpk"),
-            hl2.GetPath("hl2", "hl2_misc_003.vpk"),
-        };
-
-        var chunks = chunkPaths
-            .Select(path => new VPKChunkStream(File.ReadAllBytes(path)))
-            .ToList();
-
-        var parser = new VPKFormatParser();
-
-        var vpk = parser.Parse(directory, chunks);
-
-        var valveRcContent = vpk.ReadFileAsString("cfg/valve.rc");
-
+        var valveRcContent = hl2MiscVpk.ReadFileAsString("cfg/valve.rc");
         Assert.Contains("exec autoexec.cfg", valveRcContent);
     }
 
