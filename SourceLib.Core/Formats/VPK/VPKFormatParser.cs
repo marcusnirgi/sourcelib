@@ -2,7 +2,7 @@ namespace SourceLib.Core.Formats.VPK;
 
 public sealed class VPKFormatParser
 {
-    public VPK Parse(ReadOnlySpan<byte> directory, IReadOnlyList<Stream> chunks)
+    public VPK Parse(ReadOnlySpan<byte> directory, IReadOnlyList<VPKChunkStream> chunks)
     {
         using var stream = new MemoryStream(directory.ToArray());
         using var reader = new BinaryReader(stream);

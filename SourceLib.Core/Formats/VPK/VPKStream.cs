@@ -6,10 +6,15 @@ public sealed class VPKStream : Stream
 {
     private readonly MemoryStream _inner;
     private readonly VPKFile _file;
-    private readonly IList<Stream> _chunks;
+    private readonly IList<VPKChunkStream> _chunks;
     private readonly bool _writable;
 
-    internal VPKStream(MemoryStream inner, VPKFile file, IList<Stream> chunks, bool writable)
+    internal VPKStream(
+        MemoryStream inner,
+        VPKFile file,
+        IList<VPKChunkStream> chunks,
+        bool writable
+    )
     {
         _inner = inner;
         _file = file;

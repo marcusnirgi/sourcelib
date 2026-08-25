@@ -12,17 +12,17 @@ public sealed class VPKFile
 
     public IList<byte> PreloadData { get; set; } = [];
 
-    public VPKStream Open(IList<Stream> chunks)
+    public VPKStream Open(IList<VPKChunkStream> chunks)
     {
         return OpenInternal(chunks, writable: false);
     }
 
-    public VPKStream OpenWrite(IList<Stream> chunks)
+    public VPKStream OpenWrite(IList<VPKChunkStream> chunks)
     {
         return OpenInternal(chunks, writable: true);
     }
 
-    private VPKStream OpenInternal(IList<Stream> chunks, bool writable)
+    private VPKStream OpenInternal(IList<VPKChunkStream> chunks, bool writable)
     {
         var stream = new MemoryStream();
 

@@ -23,7 +23,7 @@ public class VPKFormatTests
         var serializer = new VPKFormatSerializer();
 
         var directory = File.ReadAllBytes(directoryPath);
-        var chunk = CreateChunk(File.ReadAllBytes(chunkPath));
+        var chunk = new VPKChunkStream(File.ReadAllBytes(chunkPath));
 
         var vpk = parser.Parse(directory, [chunk]);
 
@@ -36,29 +36,20 @@ public class VPKFormatTests
 
         var textFile = vpk.Files.First(f => f.Path == "file_with_number.txt");
 
-        using (var reader = new StreamReader(textFile.Open(vpk.Chunks)))
-        {
-            Assert.Equal("39", reader.ReadLine());
-        }
+        Assert.Equal("39", vpk.ReadFileAsString("file_with_number.txt").Trim());
 
-        using (var writer = new StreamWriter(textFile.OpenWrite(vpk.Chunks)))
-        {
-            writer.WriteLine("42");
-        }
+        vpk.WriteFileText("file_with_number.txt", "42");
 
         var serializedDirectory = serializer.Serialize(vpk);
 
-        var reparsed = parser.Parse(serializedDirectory, [CreateChunk(chunk.ToArray())]);
+        var reparsed = parser.Parse(serializedDirectory, [new VPKChunkStream(chunk.ToArray())]);
 
         Assert.Equal(4, reparsed.Files.Count);
 
         var modifiedFile = reparsed.Files.First(f => f.Path == "file_with_number.txt");
 
         Assert.Equal(textFile.Crc, modifiedFile.Crc);
-
-        using var modifiedReader = new StreamReader(modifiedFile.Open(reparsed.Chunks));
-
-        Assert.Equal("42", modifiedReader.ReadLine());
+        Assert.Equal("42", reparsed.ReadFileAsString("file_with_number.txt").Trim());
     }
 
     [Fact]
@@ -71,7 +62,7 @@ public class VPKFormatTests
         var serializer = new VPKFormatSerializer();
 
         var directory = File.ReadAllBytes(directoryPath);
-        var chunk = CreateChunk(File.ReadAllBytes(chunkPath));
+        var chunk = new VPKChunkStream(File.ReadAllBytes(chunkPath));
 
         var vpk = parser.Parse(directory, [chunk]);
 
@@ -84,77 +75,20 @@ public class VPKFormatTests
 
         var textFile = vpk.Files.First(f => f.Path == "file_with_number.txt");
 
-        using (var reader = new StreamReader(textFile.Open(vpk.Chunks)))
-        {
-            Assert.Equal("39", reader.ReadLine());
-        }
+        Assert.Equal("39", vpk.ReadFileAsString("file_with_number.txt").Trim());
 
-        using (var writer = new StreamWriter(textFile.OpenWrite(vpk.Chunks)))
-        {
-            writer.WriteLine("42");
-        }
+        vpk.WriteFileText("file_with_number.txt", "42");
 
         var serializedDirectory = serializer.Serialize(vpk);
 
-        var reparsed = parser.Parse(serializedDirectory, [CreateChunk(chunk.ToArray())]);
+        var reparsed = parser.Parse(serializedDirectory, [new VPKChunkStream(chunk.ToArray())]);
 
         Assert.Equal(4, reparsed.Files.Count);
 
         var modifiedFile = reparsed.Files.First(f => f.Path == "file_with_number.txt");
 
         Assert.Equal(textFile.Crc, modifiedFile.Crc);
-
-        using var modifiedReader = new StreamReader(modifiedFile.Open(reparsed.Chunks));
-
-        Assert.Equal("42", modifiedReader.ReadLine());
-    }
-
-    [Fact]
-    public void Test_Roundtrips_V2()
-    {
-        var directoryPath = TestFixtures.GetPath("vpk", "v2", "sourcelib-vpk_dir.vpk");
-        var chunkPath = TestFixtures.GetPath("vpk", "v2", "sourcelib-vpk_000.vpk");
-
-        var parser = new VPKFormatParser();
-        var serializer = new VPKFormatSerializer();
-
-        var directory = File.ReadAllBytes(directoryPath);
-        var chunk = CreateChunk(File.ReadAllBytes(chunkPath));
-
-        var vpk = parser.Parse(directory, [chunk]);
-
-        Assert.Equal(4, vpk.Files.Count);
-
-        var folderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
-        var otherFolderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
-
-        Assert.Equal(folderizedFile.Crc, otherFolderizedFile.Crc);
-
-        var textFile = vpk.Files.First(f => f.Path == "file_with_number.txt");
-
-        using (var reader = new StreamReader(textFile.Open(vpk.Chunks)))
-        {
-            Assert.Equal("39", reader.ReadLine());
-        }
-
-        using (var writer = new StreamWriter(textFile.OpenWrite(vpk.Chunks)))
-        {
-            writer.WriteLine("42");
-        }
-
-        var serializedDirectory = serializer.Serialize(vpk);
-
-        var reparsed = parser.Parse(serializedDirectory, [CreateChunk(chunk.ToArray())]);
-
-        Assert.Equal(4, reparsed.Files.Count);
-
-        var modifiedFile = reparsed.Files.First(f => f.Path == "file_with_number.txt");
-
-        Assert.Equal(textFile.Crc, modifiedFile.Crc);
-
-        using var modifiedReader = new StreamReader(modifiedFile.Open(reparsed.Chunks));
-
-        Assert.Equal("42", modifiedReader.ReadLine());
+        Assert.Equal("42", reparsed.ReadFileAsString("file_with_number.txt").Trim());
     }
 
     [Fact]
@@ -163,7 +97,6 @@ public class VPKFormatTests
         var hl2 = _games.Get(GameId.HalfLife2);
 
         var directoryPath = hl2.GetPath("hl2", "hl2_misc_dir.vpk");
-
         var directory = File.ReadAllBytes(directoryPath);
 
         var chunkPaths = new[]
@@ -175,8 +108,7 @@ public class VPKFormatTests
         };
 
         var chunks = chunkPaths
-            .Select(path => CreateChunk(File.ReadAllBytes(path)))
-            .Cast<Stream>()
+            .Select(path => new VPKChunkStream(File.ReadAllBytes(path)))
             .ToList();
 
         var parser = new VPKFormatParser();
@@ -203,6 +135,74 @@ public class VPKFormatTests
     }
 
     [Fact]
+    public void Test_Roundtrips_V2()
+    {
+        var directoryPath = TestFixtures.GetPath("vpk", "v2", "sourcelib-vpk_dir.vpk");
+        var chunkPath = TestFixtures.GetPath("vpk", "v2", "sourcelib-vpk_000.vpk");
+
+        var parser = new VPKFormatParser();
+        var serializer = new VPKFormatSerializer();
+
+        var directory = File.ReadAllBytes(directoryPath);
+        var chunk = new VPKChunkStream(File.ReadAllBytes(chunkPath));
+
+        var vpk = parser.Parse(directory, [chunk]);
+
+        Assert.Equal(4, vpk.Files.Count);
+
+        var folderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
+        var otherFolderizedFile = vpk.Files.First(f => f.Path == "folder/folderized.kv2");
+
+        Assert.Equal(folderizedFile.Crc, otherFolderizedFile.Crc);
+
+        var textFile = vpk.Files.First(f => f.Path == "file_with_number.txt");
+
+        Assert.Equal("39", vpk.ReadFileAsString("file_with_number.txt").Trim());
+
+        vpk.WriteFileText("file_with_number.txt", "42");
+
+        var serializedDirectory = serializer.Serialize(vpk);
+
+        var reparsed = parser.Parse(serializedDirectory, [new VPKChunkStream(chunk.ToArray())]);
+
+        Assert.Equal(4, reparsed.Files.Count);
+
+        var modifiedFile = reparsed.Files.First(f => f.Path == "file_with_number.txt");
+
+        Assert.Equal(textFile.Crc, modifiedFile.Crc);
+        Assert.Equal("42", reparsed.ReadFileAsString("file_with_number.txt").Trim());
+    }
+
+    [Fact]
+    public void Test_Reads_HL2_ValveRC()
+    {
+        var hl2 = _games.Get(GameId.HalfLife2);
+
+        var directoryPath = hl2.GetPath("hl2", "hl2_misc_dir.vpk");
+        var directory = File.ReadAllBytes(directoryPath);
+
+        var chunkPaths = new[]
+        {
+            hl2.GetPath("hl2", "hl2_misc_000.vpk"),
+            hl2.GetPath("hl2", "hl2_misc_001.vpk"),
+            hl2.GetPath("hl2", "hl2_misc_002.vpk"),
+            hl2.GetPath("hl2", "hl2_misc_003.vpk"),
+        };
+
+        var chunks = chunkPaths
+            .Select(path => new VPKChunkStream(File.ReadAllBytes(path)))
+            .ToList();
+
+        var parser = new VPKFormatParser();
+
+        var vpk = parser.Parse(directory, chunks);
+
+        var valveRcContent = vpk.ReadFileAsString("cfg/valve.rc");
+
+        Assert.Contains("exec autoexec.cfg", valveRcContent);
+    }
+
+    [Fact]
     public void Test_Roundtrips_Portal2_Textures_V1()
     {
         var portal = _games.Get(GameId.Portal2);
@@ -216,8 +216,7 @@ public class VPKFormatTests
             .ToArray();
 
         var chunks = chunkPaths
-            .Select(path => CreateChunk(File.ReadAllBytes(path)))
-            .Cast<Stream>()
+            .Select(path => new VPKChunkStream(File.ReadAllBytes(path)))
             .ToList();
 
         var parser = new VPKFormatParser();
@@ -234,13 +233,5 @@ public class VPKFormatTests
 
         Assert.Equal(vpk.Files.Count, reparsed.Files.Count);
         Assert.Equal(vpk.Header.Version, reparsed.Header!.Version);
-    }
-
-    private static MemoryStream CreateChunk(byte[] data)
-    {
-        var stream = new MemoryStream();
-        stream.Write(data);
-        stream.Position = 0;
-        return stream;
     }
 }
