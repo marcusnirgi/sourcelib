@@ -13,7 +13,6 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
 
     public StudioMdl Parse(BinaryReader reader)
     {
-
         var idChars = reader.ReadChars(4);
 
         if (new string(idChars) != StudioMdlHeader.FormatId)
@@ -140,10 +139,14 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
             Unused2 = reader.ReadInt32(),
         };
 
-        // Read uncovered strings and data referenced by the header
+        // read uncovered strings and data referenced by the header
         var surfaceProp = ReadStringAt(reader, 0, header.SurfacePropIndex);
         var keyValues = ReadKeyValues(reader, header.KeyValueIndex, header.KeyValueSize);
-        var boneTableByName = ReadBoneTableByName(reader, header.BoneTableByNameIndex, header.BoneCount);
+        var boneTableByName = ReadBoneTableByName(
+            reader,
+            header.BoneTableByNameIndex,
+            header.BoneCount
+        );
 
         StudioMdlHeader2? header2 = null;
 
@@ -159,22 +162,63 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
             header.TextureDirectoryIndex,
             header.TextureDirectoryCount
         );
-        var skins = ParseSkins(reader, header.SkinIndex, header.SkinRefCount, header.SkinFamilyCount);
+        var skins = ParseSkins(
+            reader,
+            header.SkinIndex,
+            header.SkinRefCount,
+            header.SkinFamilyCount
+        );
         var bodyParts = ParseBodyParts(reader, header.BodyPartIndex, header.BodyPartCount);
         var hitboxSets = ParseHitboxSets(reader, header.HitboxSetIndex, header.HitboxSetCount);
-        var attachments = ParseAttachments(reader, header.LocalAttachmentIndex, header.LocalAttachmentCount);
-        var boneControllers = ParseBoneControllers(reader, header.BoneControllerIndex, header.BoneControllerCount);
+        var attachments = ParseAttachments(
+            reader,
+            header.LocalAttachmentIndex,
+            header.LocalAttachmentCount
+        );
+        var boneControllers = ParseBoneControllers(
+            reader,
+            header.BoneControllerIndex,
+            header.BoneControllerCount
+        );
         var flexDescs = ParseFlexDescs(reader, header.FlexDescIndex, header.FlexDescCount);
-        var flexControllers = ParseFlexControllers(reader, header.FlexControllerIndex, header.FlexControllerCount);
+        var flexControllers = ParseFlexControllers(
+            reader,
+            header.FlexControllerIndex,
+            header.FlexControllerCount
+        );
         var flexRules = ParseFlexRules(reader, header.FlexRuleIndex, header.FlexRuleCount);
-        var flexControllerUi = ParseFlexControllerUi(reader, header.FlexControllerUiIndex, header.FlexControllerUiCount);
+        var flexControllerUi = ParseFlexControllerUi(
+            reader,
+            header.FlexControllerUiIndex,
+            header.FlexControllerUiCount
+        );
         var ikChains = ParseIkChains(reader, header.IkChainIndex, header.IkChainCount);
-        var poseParameters = ParsePoseParameters(reader, header.LocalPoseParameterIndex, header.LocalPoseParameterCount);
+        var poseParameters = ParsePoseParameters(
+            reader,
+            header.LocalPoseParameterIndex,
+            header.LocalPoseParameterCount
+        );
         var mouths = ParseMouths(reader, header.MouthIndex, header.MouthCount);
-        var includeModels = ParseIncludeModels(reader, header.IncludeModelIndex, header.IncludeModelCount);
-        var animBlocks = ParseAnimBlocks(reader, header.AnimationBlockIndex, header.AnimationBlockCount);
-        var animations = ParseAnimations(reader, header.LocalAnimationIndex, header.LocalAnimationCount);
-        var sequences = ParseSequences(reader, header.LocalSequencesIndex, header.LocalSequencesCount);
+        var includeModels = ParseIncludeModels(
+            reader,
+            header.IncludeModelIndex,
+            header.IncludeModelCount
+        );
+        var animBlocks = ParseAnimBlocks(
+            reader,
+            header.AnimationBlockIndex,
+            header.AnimationBlockCount
+        );
+        var animations = ParseAnimations(
+            reader,
+            header.LocalAnimationIndex,
+            header.LocalAnimationCount
+        );
+        var sequences = ParseSequences(
+            reader,
+            header.LocalSequencesIndex,
+            header.LocalSequencesCount
+        );
 
         StudioMdlLinearBone? linearBones = null;
         if (header2 is not null)
@@ -872,7 +916,11 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
         return flexes;
     }
 
-    private List<StudioMdlEyeball> ParseEyeballs(BinaryReader reader, int eyeballCount, long modelOffset)
+    private List<StudioMdlEyeball> ParseEyeballs(
+        BinaryReader reader,
+        int eyeballCount,
+        long modelOffset
+    )
     {
         var eyeballs = new List<StudioMdlEyeball>(eyeballCount);
 
@@ -1174,13 +1222,7 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
             var name = ReadStringAt(reader, descOffset, facsIndex);
             reader.BaseStream.Position = returnPosition;
 
-            descs.Add(
-                new StudioMdlFlexDesc
-                {
-                    FacsIndex = facsIndex,
-                    Name = name,
-                }
-            );
+            descs.Add(new StudioMdlFlexDesc { FacsIndex = facsIndex, Name = name });
         }
 
         return descs;
@@ -1435,11 +1477,7 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
         return parameters;
     }
 
-    private List<StudioMdlMouth> ParseMouths(
-        BinaryReader reader,
-        int mouthIndex,
-        int mouthCount
-    )
+    private List<StudioMdlMouth> ParseMouths(BinaryReader reader, int mouthIndex, int mouthCount)
     {
         var mouths = new List<StudioMdlMouth>(mouthCount);
 
@@ -1621,10 +1659,7 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
             if (numIkRules > 0 && ikRuleIndex != 0)
             {
                 reader.BaseStream.Position = animOffset + ikRuleIndex;
-                ikRules = Enumerable
-                    .Range(0, numIkRules)
-                    .Select(_ => ParseIkRule(reader))
-                    .ToList();
+                ikRules = Enumerable.Range(0, numIkRules).Select(_ => ParseIkRule(reader)).ToList();
             }
 
             IList<StudioMdlLocalHierarchy> localHierarchy = [];
@@ -1862,7 +1897,7 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
                     .ToList();
             }
 
-            // Blend grid: short[groupsize[1]][groupsize[0]] of animdesc indices
+            // blend grid: short[groupsize[1]][groupsize[0]] of animdesc indices
             IList<IList<int>> animIndices = [];
             var width = groupSize[0];
             var height = groupSize[1];
@@ -2047,12 +2082,7 @@ public sealed class MDLFormatParser : IBinaryFormatParser<StudioMdl>
             var boneIndex = reader.ReadInt32();
             var controlCount = reader.ReadInt32();
             var controlIndex = reader.ReadInt32();
-            var unused = new int[3]
-            {
-                reader.ReadInt32(),
-                reader.ReadInt32(),
-                reader.ReadInt32(),
-            };
+            var unused = new int[3] { reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32() };
 
             drivers.Add(
                 new StudioMdlBoneFlexDriver

@@ -23,14 +23,14 @@ public class LexerTests
     public void Test_Json_WithComments()
     {
         string json = """
-                      {
-                          // Single line comment here
-                          "hello": "world",
-                          /* Multi-line
-                             comment */
-                          "array": [1, 2, 3]
-                      }
-                      """;
+            {
+                // single line comment here
+                "hello": "world",
+                /* multi-line
+                   comment */
+                "array": [1, 2, 3]
+            }
+            """;
 
         var lexer = new Lexer(json);
         var tokens = GetAllTokens(lexer);
@@ -61,13 +61,13 @@ public class LexerTests
     public void Test_KV1_Macros_And_UnquotedStrings()
     {
         string kv1 = """
-                     #include "test.h"
-                     "data"
-                     {
-                         "hello" "world"
-                         unquoted_key unquoted_value
-                     }
-                     """;
+            #include "test.h"
+            "data"
+            {
+                "hello" "world"
+                unquoted_key unquoted_value
+            }
+            """;
 
         var lexer = new Lexer(kv1);
         var tokens = GetAllTokens(lexer);
@@ -94,12 +94,12 @@ public class LexerTests
     public void Test_KV2_Headers()
     {
         string kv2 = """
-                     <!-- DMXVersion keyvalues2_v1 -->
-                     "CDmeElement"
-                     {
-                         "name" "string" "my_element"
-                     }
-                     """;
+            <!-- DMXVersion keyvalues2_v1 -->
+            "CDmeElement"
+            {
+                "name" "string" "my_element"
+            }
+            """;
 
         var lexer = new Lexer(kv2);
         var tokens = GetAllTokens(lexer);
@@ -124,16 +124,16 @@ public class LexerTests
     public void Test_KV3_MultilineStrings_And_Equals()
     {
         string kv3 = """"
-                     <!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
-                     {
-                         boolValue = false
-                         arrayValue = [ 1, 2 ]
-                         multiline = """
-                         line1
-                         line2
-                         """
-                     }
-                     """";
+            <!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:generic:version{7412167c-06e9-4698-aff2-e63eb59037e7} -->
+            {
+                boolValue = false
+                arrayValue = [ 1, 2 ]
+                multiline = """
+                line1
+                line2
+                """
+            }
+            """";
 
         var lexer = new Lexer(kv3);
         var tokens = GetAllTokens(lexer);
