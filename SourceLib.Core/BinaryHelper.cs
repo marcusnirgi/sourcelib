@@ -28,40 +28,14 @@ public static class BinaryReading
         return Encoding.UTF8.GetString(bytes.Span);
     }
 
-    public static Vector3 ReadVector3(BinaryReader reader)
+    public static string ReadStringUntilAt(BinaryReader reader, long offset, byte delimiter)
     {
-        return new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-    }
-
-    public static Quaternion ReadQuaternion(BinaryReader reader)
-    {
-        return new Quaternion(
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle()
-        );
-    }
-
-    public static Matrix ReadMatrix(BinaryReader reader)
-    {
-        return new Matrix([
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-            reader.ReadSingle(),
-        ]);
+        if (offset <= 0 || offset >= reader.BaseStream.Length)
+            return string.Empty;
+        var returnPos = reader.BaseStream.Position;
+        reader.BaseStream.Position = offset;
+        var result = ReadStringUntil(reader, delimiter);
+        reader.BaseStream.Position = returnPos;
+        return result;
     }
 }

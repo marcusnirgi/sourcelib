@@ -143,11 +143,11 @@ public sealed class EngineTime : EngineValue<Time>
         : base(new Time(seconds)) { }
 }
 
-public sealed class EngineMatrix : EngineValue<Matrix>
+public sealed class EngineMatrix : EngineValue<Matrix4x4>
 {
-    public EngineMatrix(Matrix value)
+    public EngineMatrix(Matrix4x4 value)
         : base(value) { }
 
-    public EngineMatrix(IReadOnlyList<float> values)
-        : base(new Matrix(values)) { }
+    public EngineMatrix(IList<float> values)
+        : base(new Matrix4x4(values)) { }
 }

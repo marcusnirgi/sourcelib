@@ -85,7 +85,7 @@ public static class KeyValues2EngineValueConverter
         );
     }
 
-    private static Matrix ParseMatrix(string value)
+    private static Matrix4x4 ParseMatrix(string value)
     {
         var parts = value.Split(' ');
 
@@ -94,6 +94,6 @@ public static class KeyValues2EngineValueConverter
         for (var i = 0; i < 16; i++)
             values[i] = float.Parse(parts[i]);
 
-        return new Matrix(values);
+        return new Matrix4x4(values);
     }
 }

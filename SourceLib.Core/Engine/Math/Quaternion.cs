@@ -16,4 +16,14 @@ public sealed class Quaternion
         Z = z;
         W = w;
     }
+
+    public static Quaternion ReadBinary(BinaryReader reader)
+    {
+        return new Quaternion(
+            reader.ReadSingle(),
+            reader.ReadSingle(),
+            reader.ReadSingle(),
+            reader.ReadSingle()
+        );
+    }
 }

@@ -10,6 +10,17 @@ public sealed class Vector2
         X = x;
         Y = y;
     }
+
+    public static Vector2 ReadBinary(BinaryReader reader)
+    {
+        return new Vector2(reader.ReadSingle(), reader.ReadSingle());
+    }
+
+    public void WriteBinary(BinaryWriter writer)
+    {
+        writer.Write(X);
+        writer.Write(Y);
+    }
 }
 
 public sealed class Vector3
@@ -23,6 +34,18 @@ public sealed class Vector3
         X = x;
         Y = y;
         Z = z;
+    }
+
+    public static Vector3 ReadBinary(BinaryReader reader)
+    {
+        return new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+    }
+
+    public void WriteBinary(BinaryWriter writer)
+    {
+        writer.Write(X);
+        writer.Write(Y);
+        writer.Write(Z);
     }
 }
 
@@ -39,5 +62,23 @@ public sealed class Vector4
         Y = y;
         Z = z;
         W = w;
+    }
+
+    public static Vector4 ReadBinary(BinaryReader reader)
+    {
+        return new Vector4(
+            reader.ReadSingle(),
+            reader.ReadSingle(),
+            reader.ReadSingle(),
+            reader.ReadSingle()
+        );
+    }
+
+    public void WriteBinary(BinaryWriter writer)
+    {
+        writer.Write(X);
+        writer.Write(Y);
+        writer.Write(Z);
+        writer.Write(W);
     }
 }
