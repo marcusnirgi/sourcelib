@@ -60,21 +60,21 @@ public sealed class VPKFormatParser
 
         while (true)
         {
-            var extensionName = BinaryHelper.ReadStringUntil(reader, 0);
+            var extensionName = BinaryReading.ReadStringUntil(reader, 0);
 
             if (extensionName.Length == 0)
                 break;
 
             while (true)
             {
-                var directoryName = BinaryHelper.ReadStringUntil(reader, 0);
+                var directoryName = BinaryReading.ReadStringUntil(reader, 0);
 
                 if (directoryName.Length == 0)
                     break;
 
                 while (true)
                 {
-                    var fileName = BinaryHelper.ReadStringUntil(reader, 0);
+                    var fileName = BinaryReading.ReadStringUntil(reader, 0);
 
                     if (fileName.Length == 0)
                         break;

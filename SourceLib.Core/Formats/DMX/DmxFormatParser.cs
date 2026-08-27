@@ -11,7 +11,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
         using var stream = new MemoryStream(input.ToArray());
         using var reader = new BinaryReader(stream);
 
-        var headerRaw = BinaryHelper.ReadStringUntil(reader, (byte)'\n');
+        var headerRaw = BinaryReading.ReadStringUntil(reader, (byte)'\n');
         var header = DmxHeader.FromString(headerRaw);
 
         if (header.Encoding != "binary")
@@ -119,7 +119,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
         var values = new List<string>(stringCount);
 
         for (var i = 0; i < stringCount; i++)
-            values.Add(BinaryHelper.ReadStringUntil(reader, 0));
+            values.Add(BinaryReading.ReadStringUntil(reader, 0));
 
         return values;
     }
@@ -133,7 +133,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
         if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V2)
             return ReadStringMapValue(reader, encodingVersion, stringMap);
 
-        return BinaryHelper.ReadStringUntil(reader, 0);
+        return BinaryReading.ReadStringUntil(reader, 0);
     }
 
     private static string ReadElementName(
@@ -145,7 +145,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
         if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V4)
             return ReadStringMapValue(reader, encodingVersion, stringMap);
 
-        return BinaryHelper.ReadStringUntil(reader, 0);
+        return BinaryReading.ReadStringUntil(reader, 0);
     }
 
     private static string ReadAttributeName(
@@ -157,7 +157,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
         if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V2)
             return ReadStringMapValue(reader, encodingVersion, stringMap);
 
-        return BinaryHelper.ReadStringUntil(reader, 0);
+        return BinaryReading.ReadStringUntil(reader, 0);
     }
 
     private static string ReadScalarString(
@@ -169,7 +169,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
         if (encodingVersion >= DmxHeaderBinaryEncodingVersion.V4)
             return ReadStringMapValue(reader, encodingVersion, stringMap);
 
-        return BinaryHelper.ReadStringUntil(reader, 0);
+        return BinaryReading.ReadStringUntil(reader, 0);
     }
 
     private static string ReadStringMapValue(
@@ -215,7 +215,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
 
                 if (elementIndex == -2)
                 {
-                    var stubId = Guid.Parse(BinaryHelper.ReadStringUntil(reader, 0));
+                    var stubId = Guid.Parse(BinaryReading.ReadStringUntil(reader, 0));
 
                     return (new EngineGuid(stubId), null);
                 }
@@ -340,7 +340,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
                     else if (elementIndex == -2)
                     {
                         values.Add(
-                            new EngineGuid(Guid.Parse(BinaryHelper.ReadStringUntil(reader, 0)))
+                            new EngineGuid(Guid.Parse(BinaryReading.ReadStringUntil(reader, 0)))
                         );
                     }
                     else
@@ -368,7 +368,7 @@ public sealed class DmxFormatParser : IBinaryFormatParser<DmxDocument>
 
                 for (var i = 0; i < count; i++)
                 {
-                    values.Add(new EngineString(BinaryHelper.ReadStringUntil(reader, 0)));
+                    values.Add(new EngineString(BinaryReading.ReadStringUntil(reader, 0)));
                 }
 
                 return (new EngineArray<EngineString>(values), null);
