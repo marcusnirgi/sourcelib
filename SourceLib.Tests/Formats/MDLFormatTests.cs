@@ -15,7 +15,7 @@ public class MDLFormatTests
     }
 
     [Fact]
-    public void Test_Parses_V44_HL2_Cheaple()
+    public void Test_Roundtrips_V44_HL2_Cheaple()
     {
         var hl2 = _games.Get(GameId.HalfLife2);
         var hl2MiscVpk = hl2.GetVPK(
@@ -39,5 +39,80 @@ public class MDLFormatTests
         Assert.Equal(16, mdl.Header.BoneCount);
         Assert.Contains("Charple1_sheet", mdl.Textures.Select(t => t.Name));
         Assert.Equal("models\\Charple\\", mdl.TextureDirectories[0]);
+        var serializer = new MDLFormatSerializer();
+        var serialized = serializer.Serialize(mdl);
+        Assert.Equal(fixtureBytes, serialized);
+    }
+
+    [Fact]
+    public void Test_Roundtrips_V45_HL2_Table()
+    {
+        var hl2 = _games.Get(GameId.HalfLife2);
+        var hl2MiscVpk = hl2.GetVPK(
+            new VPKFormatParser(),
+            ["hl2", "hl2_misc_dir.vpk"],
+            [
+                hl2.GetPath("hl2", "hl2_misc_000.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_001.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_002.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_003.vpk"),
+            ]
+        );
+        var fixtureBytes = hl2MiscVpk.ReadFileAsBytes("models/props_c17/furnituretable003a.mdl");
+        var mdlParser = new MDLFormatParser();
+        var mdl = mdlParser.Parse(fixtureBytes);
+        Assert.Equal(StudioMdlVersion.V45, mdl.Header.Version);
+        Assert.Equal("props_c17\\FurnitureTable003a.mdl", mdl.Header.Name);
+        var serializer = new MDLFormatSerializer();
+        var serialized = serializer.Serialize(mdl);
+        Assert.Equal(fixtureBytes, serialized);
+    }
+
+    [Fact]
+    public void Test_Roundtrips_V46_HL2_Shelf()
+    {
+        var hl2 = _games.Get(GameId.HalfLife2);
+        var hl2MiscVpk = hl2.GetVPK(
+            new VPKFormatParser(),
+            ["hl2", "hl2_misc_dir.vpk"],
+            [
+                hl2.GetPath("hl2", "hl2_misc_000.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_001.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_002.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_003.vpk"),
+            ]
+        );
+        var fixtureBytes = hl2MiscVpk.ReadFileAsBytes("models/props_c17/furnitureshelf002a.mdl");
+        var mdlParser = new MDLFormatParser();
+        var mdl = mdlParser.Parse(fixtureBytes);
+        Assert.Equal(StudioMdlVersion.V46, mdl.Header.Version);
+        Assert.Equal("props_c17\\FurnitureShelf002a.mdl", mdl.Header.Name);
+        var serializer = new MDLFormatSerializer();
+        var serialized = serializer.Serialize(mdl);
+        Assert.Equal(fixtureBytes, serialized);
+    }
+
+    [Fact]
+    public void Test_Roundtrips_V47_HL2_Airboat()
+    {
+        var hl2 = _games.Get(GameId.HalfLife2);
+        var hl2MiscVpk = hl2.GetVPK(
+            new VPKFormatParser(),
+            ["hl2", "hl2_misc_dir.vpk"],
+            [
+                hl2.GetPath("hl2", "hl2_misc_000.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_001.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_002.vpk"),
+                hl2.GetPath("hl2", "hl2_misc_003.vpk"),
+            ]
+        );
+        var fixtureBytes = hl2MiscVpk.ReadFileAsBytes("models/airboat.mdl");
+        var mdlParser = new MDLFormatParser();
+        var mdl = mdlParser.Parse(fixtureBytes);
+        Assert.Equal(StudioMdlVersion.V47, mdl.Header.Version);
+        Assert.Equal("airboat.mdl", mdl.Header.Name);
+        var serializer = new MDLFormatSerializer();
+        var serialized = serializer.Serialize(mdl);
+        Assert.Equal(fixtureBytes, serialized);
     }
 }
